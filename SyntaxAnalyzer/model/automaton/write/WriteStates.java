@@ -46,7 +46,7 @@ public enum WriteStates implements State{
 				return WRITE_ARRAYVERIFICATION_OR_ATTRIBUTE_OR_MOREWRITINGS_STATE;
 			}
 			else if(token.getTokenClass().equals("CadeCharacters")) {
-				return WRITE_MOREWRITINGS_OR_CORRECTWRITE_STATE;
+				return WRITE_MOREWRITINGS_OR_CLOSEBRACKETS_STATE;
 			}
 			return WriteFinalStates.BADLYFORMED_WRITE_FINALSTATE;
 		}
@@ -65,19 +65,30 @@ public enum WriteStates implements State{
 		}
 	},
 	
-	WRITE_MOREWRITINGS_OR_CORRECTWRITE_STATE {
+	WRITE_MOREWRITINGS_OR_CLOSEBRACKETS_STATE {
 		
 		@Override
 		public State next(Token token) {
 			if(token.getValue().equals(",")) {
 				return WRITE_IDENTIFIER_OR_CADECHARACTERES_STATE;
 			}
-			else if(token.getValue().equals(";")) {
-				return WriteFinalStates.CORRECT_WRITE_FINALSTATE;
+			else if(token.getValue().equals(")")) {
+				return WRITE_SEMICOLON_STATE;
 			}
 			else {
 				return WriteFinalStates.BADLYFORMED_WRITE_FINALSTATE;
 			}
+		}
+	},
+	
+	WRITE_SEMICOLON_STATE {
+		
+		@Override
+		public State next(Token token) {
+			if(token.getValue().equals(";")) {
+				return WriteFinalStates.CORRECT_WRITE_FINALSTATE;
+			}
+			return WriteFinalStates.BADLYFORMED_WRITE_FINALSTATE;
 		}
 	}
 
