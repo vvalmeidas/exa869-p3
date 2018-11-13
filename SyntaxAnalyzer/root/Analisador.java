@@ -28,7 +28,7 @@ public class Analisador {
 				return true;
 			}
 		}
-		//caso <A> ::= <> teria que voltar para quem chamou expressıes
+		//caso <A> ::= <> teria que voltar para quem chamou express√µes
 		return false;
 	}
 	
@@ -190,7 +190,7 @@ public class Analisador {
 			}
 		}
 		else if(token.getTokenClass().equals("Identifier")) { 
-			//aqui teria que chamar a funÁ„o de array verification e de chamada a atributo
+			//aqui teria que chamar a fun√ß√£o de array verification e de chamada a atributo
 		}
 		else if(token.getValue().equals("true") || token.getValue().equals("false")) {
 			return true;
@@ -209,7 +209,7 @@ public class Analisador {
 				while(token.getTokenClass().equals("Identificador")  || token.getTokenClass().equals("CadeCharacters")) {
 					if(token.getTokenClass().equals("Identifier")) {
 						token = nextToken();
-						//aqui teria que chamar a funÁ„o de array verification e de chamada a atributo
+						//aqui teria que chamar a fun√ß√£o de array verification e de chamada a atributo
 							
 						if(token.getValue().equals(",")) {
 							token = nextToken();
@@ -255,5 +255,46 @@ public class Analisador {
 			return false;
 		}
 		return false;
-	}	
+	}
+	
+		public boolean analiseIf() {
+		if(token.getValue().equals("if")) {
+			if(token.getValue().equals("(")) {
+				if() { //analiseExpression()
+					if(token.getValue().equals(")")) {
+						if(token.getValue().equals("then")) {
+							if(token.getValue().equals("{")) {
+								if(true) { //commands
+									if(token.getValue().equals("}")) {
+										return analiseElse();
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean analiseElse() {
+		if(token.getValue().equals("else")) {
+			if(token.getValue().equals("{")) {
+				if(true) { //commands
+					if(token.getValue().equals("}")) {
+						
+					} else if(token.getValue().equals("")) { //vazio
+						
+					}
+					
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+
 }
