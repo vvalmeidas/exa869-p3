@@ -1,12 +1,12 @@
 package model;
 
-import root.Analisador;
+import root.Analyzer;
 
 public class WriteRecognizer {
-	private Analisador parser;
+	private Analyzer parser;
 	private Token token;
 	
-	public WriteRecognizer(Token token, Analisador parser) {
+	public WriteRecognizer(Token token, Analyzer parser) {
 		this.token = token;
 		this.parser = parser;
 	}
@@ -21,7 +21,7 @@ public class WriteRecognizer {
 				while(token.getTokenClass().equals("Identificador")  || token.getTokenClass().equals("CadeCharacters")) {
 					if(token.getTokenClass().equals("Identifier")) {
 						token = parser.nextToken();
-						//aqui teria que chamar a função de array verification e de chamada a atributo
+						//aqui teria que chamar a funï¿½ï¿½o de array verification e de chamada a atributo
 						
 						if(token.getValue().equals(",")) {
 							token = parser.nextToken();

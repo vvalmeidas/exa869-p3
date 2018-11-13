@@ -1,15 +1,22 @@
 package root;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import model.Token;
 
-public class Analisador {
+public class Analyzer {
 	private Token token;
+	
+	private LinkedList<String> firstElse = new LinkedList<String>() {{
+		add("a");
+	}};
 	
 	public Token nextToken() {
 		return null;
 	}
 	
-	public boolean analiseExpressions() { //<Expression> ::= <And Exp> <A>
+	public boolean analiseExpression() { //<Expression> ::= <And Exp> <A>
 		if(andExp()) {
 			nextToken();
 			if(a()) {
@@ -24,7 +31,7 @@ public class Analisador {
 	public boolean a() {
 		if(token.getValue().equals("||")) { //<A> ::= '||' <Expression>
 			nextToken();
-			if(analiseExpressions()) {
+			if(analiseExpression()) {
 				return true;
 			}
 		}
@@ -183,7 +190,7 @@ public class Analisador {
 			return true;
 		}
 		else if(token.getValue().equals("(")) {
-			if(analiseExpressions()) {
+			if(analiseExpression()) {
 				if(token.getValue().equals(")")) {
 					return true;
 				}
@@ -257,16 +264,24 @@ public class Analisador {
 		return false;
 	}
 	
-		public boolean analiseIf() {
+	public boolean analiseCommands() {
+		return true;
+	}
+	
+	public boolean analiseIf() {
 		if(token.getValue().equals("if")) {
 			if(token.getValue().equals("(")) {
-				if() { //analiseExpression()
+				if(analiseExpression()) { 
 					if(token.getValue().equals(")")) {
 						if(token.getValue().equals("then")) {
 							if(token.getValue().equals("{")) {
 								if(true) { //commands
 									if(token.getValue().equals("}")) {
-										return analiseElse();
+										if(firstElse.contains(token.getValue())) {
+											return analiseElse();
+										} 
+										
+										return true;
 									}
 								}
 							}
@@ -278,23 +293,22 @@ public class Analisador {
 		
 		return false;
 	}
+
 	
-	private boolean analiseElse() {
+	public boolean analiseElse() {
 		if(token.getValue().equals("else")) {
 			if(token.getValue().equals("{")) {
-				if(true) { //commands
+				if(analiseCommands()) { //commands
 					if(token.getValue().equals("}")) {
-						
-					} else if(token.getValue().equals("")) { //vazio
-						
+						return true;
 					}
-					
-					return true;
 				}
-			}
+			} 
+			
+			return false;
 		}
 		
-		return false;
+		return true;
 	}
 
 }
