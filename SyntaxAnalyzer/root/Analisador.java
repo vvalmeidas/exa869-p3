@@ -12,77 +12,118 @@ public class Analisador {
 	public boolean analiseExpressions() { //<Expression> ::= <And Exp> <A>
 		if(andExp()) {
 			nextToken();
-			if(token.getValue().equals("||")) { //<A> ::= '||' <Expression>
-				nextToken();
-				if(analiseExpressions()) {
-					return true;
-				}
+			if(a()) {
+				return true;
 			}
-			return true; //<A> ::= <>
+			return false;
 		}
 		
 		return false;
 	}
 	
+	public boolean a() {
+		if(token.getValue().equals("||")) { //<A> ::= '||' <Expression>
+			nextToken();
+			if(analiseExpressions()) {
+				return true;
+			}
+		}
+		//caso <A> ::= <> teria que voltar para quem chamou expressões
+		return false;
+	}
+	
 	public boolean andExp() {//<And Exp> ::= <Rel Exp> <B>   
 		if(relExp()) {
+			nextToken();		
+		}
+		return false;
+	}
+	
+	public boolean b() {		
+		if(token.getValue().equals("&&")) { //<B> ::= '&&' <And Exp>
 			nextToken();
-			if(token.getValue().equals("&&")) { //<B> ::= '&&' <And Exp>
-				nextToken();
-				if(andExp()) {
-					return true;
-				}
+			if(andExp()) {
+				return true;
 			}
+		}
+		if(a()) {
 			return true; //<B> ::= <>
 		}
 		return false;
 	}
+	
 	public boolean relExp() {//<Rel Exp>::= <Add Exp> <C>
 		if(addExp()) {
-			nextToken();
-			if(token.getTokenClass().equals("RelationalOperator")) { //<C>
-				nextToken();
-				if(relExp()) {
-					return true;
-				}
+			nextToken();			
+			if(c()) {
+				return true; 
 			}
-			return true; //pq o <C> pode ser vazio
+			return false;
 		}
 		return false;
 	}
+	
+	public boolean c() { //<C>
+		if(token.getTokenClass().equals("RelationalOperator")) { //<C>
+			nextToken();
+			if(relExp()) {
+				return true;
+			}
+		}
+		else if(b()) { //pq o <C> pode ser vazio
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean addExp() { //<Add Exp> ::= <Mult Exp> <D>
 		if(multExp()) {
 			nextToken();
-			if(token.getValue().equals("+") || token.getValue().equals("-")) {
-				nextToken();
-				if(addExp()) {
-					return true;
-				}
+			if(d()) {
+				return true;
 			}
-			return true; // pq <D> pode ser vazio
+		}	
+		return false;
+	}
+	
+	public boolean d() { //<D> ::=
+		if(token.getValue().equals("+") || token.getValue().equals("-")) {
+			nextToken();
+			if(addExp()) {
+				return true;
+			}
 		}
-		
+		else if(c()){
+			return true;
+		}
 		return false;
 	}
 	
 	public boolean multExp() { // <Mult Exp> ::= <Neg Exp> <E>
 		if(negExp()) {
 			nextToken();
-			//inicio <E>
-			if(token.getValue().equals("*")) {
-				nextToken();
-				if(multExp()) {
-					return true;
-				}
+			if(e()) {
+				return true;
 			}
-			if(token.getValue().equals("/")) {
-				nextToken();
-				if(multExp()) {
-					return true;
-				}
+		}
+		return false;
+	}
+	public boolean e() { //<E>
+		
+		if(token.getValue().equals("*")) {
+			nextToken();
+			if(multExp()) {
+				return true;
 			}
-			return true; // pq <E> pode ser vazio
-			//fim <E>
+		}
+		else if(token.getValue().equals("/")) {
+			nextToken();
+			if(multExp()) {
+				return true;
+			}
+		}
+		else if(d()){  // <E> ::= <>
+			return true;
 		}
 		return false;
 	}
@@ -107,8 +148,11 @@ public class Analisador {
 		
 		if(expValue()) {//<Exp Value> <G>
 			nextToken();
-			if(token.getValue().equals("--") || token.getValue().equals("++")) { //'--' | '++' | <>
+			if(token.getValue().equals("--") || token.getValue().equals("++")) { // <G> ::= '--' | '++' | <>
 				return true;
+			}
+			else { // <G> ::= <>
+				e();
 			}
 		}
 		
@@ -122,20 +166,15 @@ public class Analisador {
 			//}
 			else if(expValue()) {
 				return true;
-
 			}
-		}
-		
+		}		
 		if(token.getValue().equals("--") || token.getValue().equals("++")) { // '++' <Exp Value> | '--'<Exp Value>
 			nextToken();
 			if(expValue()) {
 				return true;
 			}
-		}
-			
-		//fim <Neg Exp>
-		
-		
+		}			
+		//fim <Neg Exp>		
 		return false;
 	}
 	
