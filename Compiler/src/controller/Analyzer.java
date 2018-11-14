@@ -178,14 +178,24 @@ public class Analyzer {
 		return false;
 	}
 	
+	// <Attribution> ::= <Increment>Identifier<Array Verification><Attr> | Identifier<Array Verification><Attr><Verif>
 	public static boolean analiseAttribution() {
-		
-		
-		
-		
-		
-		
-		
+		if(AnalyzerSecondary.analiseIncrement()) {
+			if(TokensFlow.hasNext() && TokensFlow.getNext().getTokenClass().equals("Identifier")) {
+				if(AnalyzerSecondary.analiseArrayVerification()) {
+					return AnalyzerSecondary.analiseAttr();
+				}
+			}
+			return false;
+		}
+		else if(TokensFlow.hasNext() && TokensFlow.getNext().getTokenClass().equals("Identifier")) {
+			if(AnalyzerSecondary.analiseArrayVerification()) {
+				if(AnalyzerSecondary.analiseAttr()) {
+					return AnalyzerSecondary.analiseVerif();
+				}
+			}
+			return false;
+		}	
 		return false;
 	}
 
