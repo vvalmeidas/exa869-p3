@@ -16,17 +16,29 @@ import java.util.List;
 public class TokensFlow {
 	
 	public static List<Token> tokensSet = new LinkedList<Token>();
+	private static int index;
 	
 	public static void setTokensSet(List<Token> tokens) {
+		index = 0;
 		tokensSet = tokens;
 	}
 	
 	public static Token getNext() {
-		return new Token(null, null, 0);
+		Token token = tokensSet.get(index);
+		index++;
+		return token;
+	}
+	
+	public static Token seeActual() {
+		return tokensSet.get(index);
 	}
 	
 	public static boolean hasNext() {
-		return true;
+		return tokensSet.size() > index;
+	}
+	
+	public static void goBack() {
+		index--;
 	}
 	
 	public static boolean isEmpty() {

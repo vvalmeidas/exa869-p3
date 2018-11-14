@@ -185,10 +185,11 @@ public class AnalyzerSecondary {
 	
 	public static boolean analiseElse() {
 		if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("else")) {
-			
+
 			if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("{")) {
-				
-				if(TokensFlow.hasNext() && Analyzer.analiseCommands()) { //commands
+	
+				if(TokensFlow.hasNext() && true) { //commands
+					TokensFlow.getNext(); //TIRAR ISSO AQUI
 					
 					if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("}")) {
 						return true;

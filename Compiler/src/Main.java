@@ -4,26 +4,29 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import controller.Analyzer;
 import controller.FileController;
 import model.Token;
+import model.TokensFlow;
 
 public class Main {
 
 	public static void main(String[] args) throws IOException {
-		Map<String, String> sourceFiles = FileController.readFiles();
-		Iterator<String> iSource = sourceFiles.keySet().iterator();
 		List<Token> tokens = new LinkedList<Token>();
+
 		
-		while(iSource.hasNext()) {
-			String fileName = iSource.next();
-			String sourceCode = sourceFiles.get(fileName);
-			
-			Lexer lexer = new Lexer();
-			lexer.initialize(sourceCode);
-			tokens.addAll(lexer.getTokens());
-			
-			FileController.saveFile(fileName, lexer.getResults());
-		}
+		tokens.add(new Token("a", "if", 0));
+		tokens.add(new Token("a", "(", 0));
+		tokens.add(new Token("a", "a", 0));
+		tokens.add(new Token("a", ")", 0));
+		tokens.add(new Token("a", "then", 0));
+		tokens.add(new Token("a", "{", 0));
+		tokens.add(new Token("a", "aa", 0));
+		tokens.add(new Token("a", "}", 0));
+		
+		TokensFlow.setTokensSet(tokens);
+		
+		System.out.println(Analyzer.analiseIf());
 	}
 
 }

@@ -10,7 +10,7 @@ public class Analyzer {
 	private Token token;
 	
 	private static LinkedList<String> firstElse = new LinkedList<String>() {{
-		add("a");
+		add("else");
 	}};
 	
 	public Token nextToken() {
@@ -90,26 +90,25 @@ public class Analyzer {
 	
 	public static boolean analiseIf() {
 		if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("if")) {
-			
 			if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("(")) {
-				
-				if(analiseExpression()) { 
-					
+
+				if(TokensFlow.hasNext() && true) { //analiseExpression() 
+					TokensFlow.getNext(); //TIRAR ISSO AQUI
+
 					if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals(")")) {
-						
+
 						if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("then")) {
-							
+
 							if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("{")) {
-								
-								if(true) { //commands
-									
+
+								if(TokensFlow.hasNext() && true) { //commands
+									System.out.println(TokensFlow.getNext().getValue());; //TIRAR ISSO AQUI
+
 									if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("}")) {
-										
-										if(TokensFlow.hasNext() && firstElse.contains(TokensFlow.getNext().getValue())) {
+
+										if(TokensFlow.hasNext() && firstElse.contains(TokensFlow.seeActual().getValue())) {
 											return AnalyzerSecondary.analiseElse();
 										} 
-										
-										//voltar o fluxo
 										
 										return true;
 									}
