@@ -1,0 +1,28 @@
+c + 12;
+-      13.9
+a-b
+"ab	c 45o.6"
+u != 4 ? "oi" : "tchau"
+int a;
+fl0at umFloat;
+const true  //come//ntário;
+#313n4o 
+/* 0lá
+marte
+*/
+"teste certo" 
+24/09/2018
+ii +++ 4;
+a 	extends b extends c;
+"sds,dksd#&@"
+10239u434389439
+int a, b;
+a / b - 5 == false
+if(pbl) {
+	"bugs";
+} else {
+	"paz";
+}
+while(date == 2018) {
+	"aaaaaaaaaaaaaaa"
+}

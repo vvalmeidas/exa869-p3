@@ -1,0 +1,39 @@
+class Carro extends Transporte {
+	variables String marca;
+	variables int numeroPortas;
+	variables float valor;
+	variables bool vendido;
+	const int RODAS = 4;
+	
+	method void mudarValor(float novoValor) {
+		preco = novoValor;
+		/** uma linha
+		duas linhas
+		ã#dffdnj
+		*/
+		print("Preco alterado!");
+	}
+
+	method float lerPreco() {
+		return valor; //comentario
+	}
+
+	method float calcularImpostos() {
+		float imposto = 0;
+
+		if(marca == "\"Merc\"edes\"") then {
+			imposto += valor*0.5;
+		} else then {
+			imposto += valor*0.2;
+		}
+	}
+
+	method String obterDados() {
+
+		if(vendido) then {
+			write("Marca:" + marca + " com" + numeroPortas + "portas. Valor: " + valor + ". VENDIDO!");
+		else then {
+			write("Marca:" + marca + " com" + numeroPortas + "portas. Valor: " + valor + ". DISPONIVEL!");
+		}
+	}
+}

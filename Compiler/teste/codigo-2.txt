@@ -1,0 +1,19 @@
+-   13.42a3424 que
+a#b su;r+do
+1212 //ooooo
+234.3 3-4 a)42
+/abcdefg
+resultado = 2/3;
+A.abc
+
+if(variavel===2) then {
+	int b = 6;
+	c = b-a;
+	a--;
+}
+
+write(“isto eh uma string”);
+
+
+/* Ola
+Mundo *
