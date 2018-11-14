@@ -1,5 +1,6 @@
 package controller;
 
+import jdk.internal.org.objectweb.asm.tree.analysis.Analyzer;
 import model.TokensFlow;
 
 public class AnalyzerSecondary {
@@ -173,13 +174,79 @@ public class AnalyzerSecondary {
 		}
 		
 	}
-	
+	//<Array Verification> ::= '['<Array Index>']'<DoubleArray> | <>
+	//<DoubleArray> ::= '['<Array Index>']' | <>
+	//<Array Index> ::= <Add Exp>
 	public static boolean analiseArrayVerification() {
-		return true;
+		if(analiseArrayIndex()) {
+			if(analiseArrayIndex()) {
+				return true;
+			}
+			return true; //pode ser apenas um vetor
+		}
+		return false;
 	}
-	public static boolean analiseAttr() {
-		return true;
+	public static boolean analiseArrayIndex() {
+		if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("[")) {
+			if(TokensFlow.hasNext() && addExp()) {
+				if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("]")) {
+					
+				}
+			}
+		}
 	}
 	
+	//<Attr> ::= '.'Identifier<Array Verification><Attr> | <>
+	public static boolean analiseAttr() {
+		if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals(".")) {
+			if(TokensFlow.hasNext() && TokensFlow.getNext().getTokenClass().equals("Identifier")) {
+				return analiseAttr();
+			}
+		}
+		return true; // se for vazio tem que verificar em quem chamou
+	}
+	
+	//<Verif> ::= <Normal Attribution2> | <Complement>
+	//<Normal Attribution2> ::= '=' <Normal Attribution3> | <Increment>                  
+	//<Normal Attribution3>  ::=  <Expression> | CadeCaracters
+	public static boolean analiseVerif() {
+		if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("=")) {
+			if(Analyzer.analiseExpression || (TokensFlow.hasNext() && TokensFlow.getNext().getTokenClass().equals("CadeCharacters"))) {
+				return true;
+			}
+			return false;
+		}
+		else if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("++") || TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("--")) {
+			return true;
+		}
+		//else if(analiseComplement) {
+		//	return true;
+		//}
+		
+		return false;
+	}
+	
+	//<Return1> ::= Identifier <Array Verification> | <Value>
+	public static boolean return1() {
+		if(TokensFlow.hasNext() && TokensFlow.getNext().getTokenClass().equals("Identifier")) {
+			return analiseArrayVerification();
+		}
+		else {
+			return analiseValue();
+		}
+		return false;
+	}
+	
+	//<Value> ::= Number | 'true' | 'false' | CadeCharacters
+	public static boolean analiseValue() {
+		if(TokensFlow.getNext().getTokenClass().equals("Number") 
+				|| TokensFlow.getNext().getTokenClass().equals("CadeCharacters") 
+				|| TokensFlow.getNext().getValue().equals("true")
+				|| TokensFlow.getNext().getValue().equals("false")
+				) {
+			return true;
+		}
+		return false;
+	}
 	
 }

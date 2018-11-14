@@ -119,7 +119,28 @@ public class Analyzer {
 	//<Commands>::= <If Statement><Commands> | <> | <While Statement><Commands> | <Read Statement><Commands>
     //              | <Attribution>';'<Commands> | <Write Statement><Commands> | <Return>';'
 	public static boolean analiseCommands() {
-		return true;
+		if(analiseIf()) {
+			return analiseCommands();
+		}
+		else if(analiseWhile()) {
+			return analiseCommands();
+		}
+		else if(analiseRead()) {
+			return analiseCommands();
+		}
+		else if(analiseAttribution()) {
+			if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals(";")) {
+				return analiseCommands();
+			}
+			return false;
+		}
+		else if(analiseWrite()) {
+			return analiseCommands();
+		}
+		else if(analiseReturn()) {
+			return (TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals(";"));
+		}
+		return true; // se for vazio tem que tratar em quem chamou
 	}
 	
 	//<While Statement> ::= 'while''(' <Expression> ')' '{' <Commands> '}'
@@ -198,5 +219,13 @@ public class Analyzer {
 		}	
 		return false;
 	}
-
+	
+	//<Return> ::= 'return' <Return1> 
+	public static boolean analiseReturn() {
+		if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("return")) {
+			return AnalyzerSecondary.return1();
+		}
+		return false;
+	}
+	
 }
