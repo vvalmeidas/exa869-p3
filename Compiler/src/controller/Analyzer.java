@@ -3,6 +3,7 @@ package controller;
 import java.util.LinkedList;
 import java.util.List;
 
+import jdk.nashorn.internal.parser.TokenStream;
 import model.Token;
 import model.TokensFlow;
 
@@ -30,24 +31,19 @@ public class Analyzer {
 	}
 
 	public static boolean analiseWrite() {
-		if(TokensFlow.getNext().getValue().equals("write")) {
-			nextToken();
+		if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("write")) {
 				
-			if(TokensFlow.getNext().getValue().equals("(") ) {
-				token = nextToken();
+			if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("(") ) {
 					
-				while(TokensFlow.getNext().getTokenClass().equals("Identificador")  || TokensFlow.getNext().getTokenClass().equals("CadeCharacters")) {
+				while(TokensFlow.hasNext() && TokensFlow.getNext().getTokenClass().equals("Identificador")  || TokensFlow.getNext().getTokenClass().equals("CadeCharacters")) {
 					if(TokensFlow.getNext().getTokenClass().equals("Identifier")) {
-						token = nextToken();
 						//aqui teria que chamar a função de array verification e de chamada a atributo
 							
-						if(TokensFlow.getNext().getValue().equals(",")) {
-							token = nextToken();
+						if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals(",")) {
 						}
-						else if(TokensFlow.getNext().getValue().equals(")")) {
-							token = nextToken();
+						else if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals(")")) {
 								
-							if(TokensFlow.getNext().getValue().equals(";")) {
+							if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals(";")) {
 								return true;
 							}
 							else {
@@ -59,17 +55,14 @@ public class Analyzer {
 						}
 					}
 						
-					else if(TokensFlow.getNext().getTokenClass().equals("CadeCharacters")) {
-						token = nextToken();
+					else if(TokensFlow.hasNext() && TokensFlow.getNext().getTokenClass().equals("CadeCharacters")) {
 							
-						if(TokensFlow.getNext().getValue().equals(",")) {
+						if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals(",")) {
 								
-							token = nextToken();
 						}
-						else if(TokensFlow.getNext().getValue().equals(")")) {
-							token = nextToken();
+						else if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals(")")) {
 								
-							if(TokensFlow.getNext().getValue().equals(";")) {
+							if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals(";")) {
 								return true;
 							}
 							else {
@@ -123,9 +116,77 @@ public class Analyzer {
 		return false;
 	}
 
-	
+	//<Commands>::= <If Statement><Commands> | <> | <While Statement><Commands> | <Read Statement><Commands>
+    //              | <Attribution>';'<Commands> | <Write Statement><Commands> | <Return>';'
 	public static boolean analiseCommands() {
 		return true;
+	}
+	
+	//<While Statement> ::= 'while''(' <Expression> ')' '{' <Commands> '}'
+	public static boolean analiseWhile() {
+		if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("while")) {
+
+			if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("(")) {
+				if(analiseExpression()) {
+					
+					if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals(")")) {
+						
+						if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("{")) {
+							
+							if(analiseCommands()) {
+								
+								if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("}")) {
+									return true;
+								}
+								return false;
+							}
+							return false;
+						}
+						return false;
+					}
+					return false;
+				}
+				return false
+			}
+			return false;
+		}
+		return false;
+	}
+	
+	//<Read Statement>   ::= 'read''(' <Reading_1> ')' ';'
+	public static boolean analiseRead() {
+		if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("read")) {
+			
+			if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals("(")) {
+				
+				if(TokensFlow.hasNext() && AnalyzerSecondary.analiseReading1()) {
+
+					if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals(")")) {
+
+						if(TokensFlow.hasNext() && TokensFlow.getNext().getValue().equals(";")) {
+							return true;
+						}
+						return false;
+					}
+					return false;
+				}
+				return false;
+			}
+			return false;
+		}
+		
+		return false;
+	}
+	
+	public static boolean analiseAttribution() {
+		
+		
+		
+		
+		
+		
+		
+		return false;
 	}
 
 }
