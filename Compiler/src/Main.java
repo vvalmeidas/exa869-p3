@@ -15,18 +15,48 @@ public class Main {
 		List<Token> tokens = new LinkedList<Token>();
 
 		
-		tokens.add(new Token("a", "if", 0));
+/*		tokens.add(new Token("a", "if", 0));
 		tokens.add(new Token("a", "(", 0));
 		tokens.add(new Token("a", "a", 0));
 		tokens.add(new Token("a", ")", 0));
 		tokens.add(new Token("a", "then", 0));
 		tokens.add(new Token("a", "{", 0));
-		tokens.add(new Token("a", "aa", 0));
+		tokens.add(new Token("a", "while", 0));
+		tokens.add(new Token("a", "(", 0));
+		tokens.add(new Token("a", "true", 0));
+		tokens.add(new Token("a", ")", 0));
+		tokens.add(new Token("a", "{", 0));
+		tokens.add(new Token("a", "a", 0));
+		tokens.add(new Token("a", "=", 0));
+		tokens.add(new Token("a", "1", 0));
+		tokens.add(new Token("a", "+", 0));
+		tokens.add(new Token("a", "2", 0));
+		tokens.add(new Token("a", ";", 0));
 		tokens.add(new Token("a", "}", 0));
+		tokens.add(new Token("a", "}", 0));*/
+		
+
+		tokens.add(new Token("a", "while", 0));
+		tokens.add(new Token("a", "(", 0));
+		tokens.add(new Token("a", "true", 0));
+		tokens.add(new Token("a", ")", 0));
+		tokens.add(new Token("a", "{", 0));
+		tokens.add(new Token("a", "a", 0));
+		tokens.add(new Token("a", "=", 0));
+		tokens.add(new Token("a", "1", 0));
+		tokens.add(new Token("a", "+", 0));
+		tokens.add(new Token("a", "3", 0));
+		tokens.add(new Token("a", ";", 0));
+		tokens.add(new Token("a", "}", 0));
+		
+		//TODO: Corrigir erros em commands
+
 		
 		TokensFlow.setTokensSet(tokens);
 		
-		System.out.println(Analyzer.analiseIf());
+		System.out.println(Analyzer.analiseWhile());
+		
+		//System.out.println(Analyzer.analiseIf());
 	}
 
 }

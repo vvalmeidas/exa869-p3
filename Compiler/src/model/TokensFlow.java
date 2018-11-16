@@ -23,10 +23,8 @@ public class TokensFlow {
 		tokensSet = tokens;
 	}
 	
-	public static Token getNext() {
-		Token token = tokensSet.get(index);
-		index++;
-		return token;
+	public static Token getToken() {
+		return tokensSet.get(index);
 	}
 	
 	public static Token seeActual() {
@@ -37,8 +35,12 @@ public class TokensFlow {
 		return tokensSet.size() > index;
 	}
 	
-	public static void goBack() {
+	public static void back() {
 		index--;
+	}
+	
+	public static void next() {
+		index++;
 	}
 	
 	public static boolean isEmpty() {
