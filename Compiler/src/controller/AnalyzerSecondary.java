@@ -2,70 +2,11 @@ package controller;
 
 import java.util.LinkedList;
 
+import model.First;
 import model.Token;
 import model.TokensFlow;
 
 public class AnalyzerSecondary {
-	
-	
-	public static LinkedList<String> firstA = new LinkedList<String>() {{
-		add("||");
-	}};
-	
-	public static LinkedList<String> firstAndExp = new LinkedList<String>() {{
-		add("-");
-		add("--");
-		add("!");
-		add("(");
-		add("++");
-		add("false");
-		add("true");
-		add("IDENTIFICADOR");
-		add("NUMERO");
-	}};
-	
-	public static LinkedList<String> firstB = new LinkedList<String>() {{
-		add("&&");
-	}};
-	
-	public static LinkedList<String> firstC = new LinkedList<String>() {{
-		add("OPERADOR_RELACIONAL");
-	}};
-	
-	public static LinkedList<String> firstD = new LinkedList<String>() {{
-		add("-");
-		add("+");
-	}};
-	
-	public static LinkedList<String> firstE = new LinkedList<String>() {{
-		add("*");
-		add("/");
-	}};
-	
-	public static LinkedList<String> firstG = new LinkedList<String>() {{
-		add("--");
-		add("++");
-	}};
-	
-	public static LinkedList<String> firstH = new LinkedList<String>() {{
-		add("!");
-	}};
-	
-	public static LinkedList<String> firstDoubleArray = new LinkedList<String>() {{
-		add("[");
-	}};
-	
-	public static LinkedList<String> firstArrayVerification = new LinkedList<String>() {{
-		add("[");
-	}};
-	
-	public static LinkedList<String> firstAttr = new LinkedList<String>() {{
-		add(".");
-	}};
-	
-	public static LinkedList<String> firstMoreReadings = new LinkedList<String>() {{
-		add(",");
-	}};
 	
 	
 	public static boolean analiseA() { //<A> ::= '||' <Expression> | <> 
@@ -79,7 +20,7 @@ public class AnalyzerSecondary {
 	
 	public static boolean analiseAndExp() {//<And Exp> ::= <Rel Exp> <B>   
 		if(analiseRelExp()) {
-			if(TokensFlow.hasNext() && AnalyzerSecondary.firstB.contains(TokensFlow.getToken().getValue())) {
+			if(TokensFlow.hasNext() && First.check("B", TokensFlow.getToken())) {
 				return analiseB();
 			}
 						
@@ -100,7 +41,7 @@ public class AnalyzerSecondary {
 	
 	public static boolean analiseRelExp() {//<Rel Exp>::= <Add Exp> <C>
 		if(analiseAddExp()) {
-			if(TokensFlow.hasNext() && AnalyzerSecondary.firstC.contains(TokensFlow.getToken().getValue())) {
+			if(TokensFlow.hasNext() && First.check("C", TokensFlow.getToken())) {
 				return analiseC();
 			}
 			
@@ -123,7 +64,7 @@ public class AnalyzerSecondary {
 	public static boolean analiseAddExp() { //<Add Exp> ::= <Mult Exp> <D>
 		if(analiseMultExp()) {
 			
-			if(TokensFlow.hasNext() && AnalyzerSecondary.firstD.contains(TokensFlow.getToken().getValue())) {
+			if(TokensFlow.hasNext() && First.check("D", TokensFlow.getToken())) {
 				return analiseD();
 			}
 			
@@ -144,7 +85,7 @@ public class AnalyzerSecondary {
 	
 	public static boolean analiseMultExp() { // <Mult Exp> ::= <Neg Exp> <E>
 		if(analiseNegExp()) {
-			if(TokensFlow.hasNext() && AnalyzerSecondary.firstE.contains(TokensFlow.getToken().getValue())) {
+			if(TokensFlow.hasNext() && First.check("E", TokensFlow.getToken())) {
 				return analiseE();
 			}
 			
@@ -174,7 +115,7 @@ public class AnalyzerSecondary {
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("!")) {
 			TokensFlow.next();
 			
-			if(TokensFlow.hasNext() && firstH.contains(TokensFlow.getToken().getValue())) {
+			if(TokensFlow.hasNext() && First.check("H", TokensFlow.getToken())) {
 				if(analiseH()) {
 					return analiseExpValue();
 				}
@@ -188,7 +129,7 @@ public class AnalyzerSecondary {
 			TokensFlow.next();
 			return analiseExpValue();
 		} else if(analiseExpValue()) {
-			if(TokensFlow.hasNext() && AnalyzerSecondary.firstG.contains(TokensFlow.getToken().getValue())) {
+			if(TokensFlow.hasNext() && First.check("G", TokensFlow.getToken())) {
 				return analiseG();
 			}
 			
@@ -225,7 +166,7 @@ public class AnalyzerSecondary {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("!")) {
 			TokensFlow.next();
 			
-			if(TokensFlow.hasNext() && AnalyzerSecondary.firstH.contains(TokensFlow.getToken().getValue())) {
+			if(TokensFlow.hasNext() && First.check("H", TokensFlow.getToken())) {
 				return analiseH();
 			}
 			
@@ -281,31 +222,31 @@ public class AnalyzerSecondary {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
 			TokensFlow.next();
 			
-			if(TokensFlow.hasNext() && AnalyzerSecondary.firstArrayVerification.contains(TokensFlow.getToken().getValue())) {
+			if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
 				if(analiseArrayVerification()) {
-					if(TokensFlow.hasNext() && AnalyzerSecondary.firstAttr.contains(TokensFlow.getToken().getValue())) {
+					if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
 						if(analiseAttr()) {
 							
-							if(TokensFlow.hasNext() && AnalyzerSecondary.firstMoreReadings.contains(TokensFlow.getToken().getValue())) {
+							if(TokensFlow.hasNext() && First.check("MoreReadings", TokensFlow.getToken())) {
 								return analiseMoreReadings();
 							}
 						}
 					} else {
-						if(TokensFlow.hasNext() && AnalyzerSecondary.firstMoreReadings.contains(TokensFlow.getToken().getValue())) {
+						if(TokensFlow.hasNext() && First.check("MoreReadings", TokensFlow.getToken())) {
 							return analiseMoreReadings();
 						}
 					}
 				}
 			} else {
-				if(TokensFlow.hasNext() && AnalyzerSecondary.firstAttr.contains(TokensFlow.getToken().getValue())) {
+				if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
 					if(analiseAttr()) {
 						
-						if(TokensFlow.hasNext() && AnalyzerSecondary.firstMoreReadings.contains(TokensFlow.getToken().getValue())) {
+						if(TokensFlow.hasNext() && First.check("MoreReadings", TokensFlow.getToken())) {
 							return analiseMoreReadings();
 						}
 					}
 				} else {
-					if(TokensFlow.hasNext() && AnalyzerSecondary.firstMoreReadings.contains(TokensFlow.getToken().getValue())) {
+					if(TokensFlow.hasNext() && First.check("MoreReadings", TokensFlow.getToken())) {
 						return analiseMoreReadings();
 					}
 				}
@@ -320,14 +261,16 @@ public class AnalyzerSecondary {
 		
 	}
 	
-	
 	//<Array Verification> ::= '['<Array Index>']'<DoubleArray> | <>
 	public static boolean analiseArrayVerification() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("[")) {
+			TokensFlow.next();
+			
 			if(analiseArrayIndex()) {
 				if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("]")) {
+					TokensFlow.next();
 					
-					if(TokensFlow.hasNext() && AnalyzerSecondary.firstDoubleArray.contains(TokensFlow.getToken().getValue())) {
+					if(TokensFlow.hasNext() && First.check("DoubleArray", TokensFlow.getToken())) {
 						return analiseDoubleArray();
 					}
 					
@@ -360,11 +303,17 @@ public class AnalyzerSecondary {
 	//<Attr> ::= '.'Identifier<Array Verification><Attr> | <>
 	public static boolean analiseAttr() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(".")) {
-			if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("Identifier")) {
-				return analiseAttr();
+			if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
+				
+				if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
+					return analiseAttr();
+				}
+				
+				return true;
 			}
 		}
-		return true; // se for vazio tem que verificar em quem chamou
+		
+		return false;
 	}
 	
 	//<Verif> ::= <Normal Attribution2> | <Complement>
@@ -384,7 +333,7 @@ public class AnalyzerSecondary {
 	//<Return1> ::= Identifier <Array Verification> | <Value>
 	public static boolean return1() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
-			if(TokensFlow.hasNext() && AnalyzerSecondary.firstArrayVerification.contains(TokensFlow.getToken().getValue())) {
+			if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
 				return analiseArrayVerification();
 			}
 			
@@ -411,8 +360,8 @@ public class AnalyzerSecondary {
 	//<Increment> ::= '++' | '--'
 	public static boolean analiseIncrement() {
 		if(TokensFlow.hasNext()) {
-			if(TokensFlow.seeActual().getValue() == "++" || TokensFlow.seeActual().getValue() == "--") {
-				TokensFlow.getToken();
+			if(TokensFlow.getToken().getValue() == "++" || TokensFlow.getToken().getValue() == "--") {
+				TokensFlow.next();
 				return true;
 			} 
 		}
@@ -423,11 +372,14 @@ public class AnalyzerSecondary {
 	//<Normal Attribution2> ::= '=' <Normal Attribution3> | <Increment>  
 	public static boolean analiseNormalAttribution2() {
 		if(TokensFlow.hasNext()) {
+			
 			if(TokensFlow.getToken().getValue() == "=") {
+				TokensFlow.next();
+				
 				return analiseNormalAttribution3();
-			} else if(analiseIncrement()) {
-				return true;
-			}
+			} 
+			
+			return analiseIncrement();
 		}
 		
 		return false;
@@ -437,10 +389,12 @@ public class AnalyzerSecondary {
 	public static boolean analiseNormalAttribution3() {
 		if(TokensFlow.hasNext()) {
 			if(TokensFlow.getToken().getTokenClass() == "CADEIA_DE_CARACTERES") {
+				TokensFlow.next();
+				
 				return true;
-			} else {
-				return Analyzer.analiseExpression();
-			}
+			} 
+			
+			return Analyzer.analiseExpression();
 		}
 		
 		return false;
@@ -451,9 +405,81 @@ public class AnalyzerSecondary {
 		return true;
 	}
 	
+	//<Complement> ::= '('<Param>')'
 	public static boolean analiseComplement() {
-		return true;
+		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(")) {
+			TokensFlow.next();
+
+			if(TokensFlow.hasNext() && First.check("Param", TokensFlow.getToken())) {
+				if(analiseMoreParam()) {
+					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
+						TokensFlow.next();
+						
+						return true;
+					}
+				} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
+					TokensFlow.next();
+					return true;
+				}
+			} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
+				TokensFlow.next();
+				return true;
+			} 
+		} 
+		
+		return false;
 	}
+	
+	//<Param> ::= <> | <Expression><MoreParam> | CadeCaracters<MoreParam> 
+	public static boolean analiseParam() {
+		if(Analyzer.analiseExpression()) {
+			
+			if(TokensFlow.hasNext() && First.check("MoreParam", TokensFlow.getToken())) {
+				return analiseMoreParam();
+			}
+			
+			return true;
+		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("CADEIA_DE_CARACTERES")) {
+			TokensFlow.next();
+			
+			if(TokensFlow.hasNext() && First.check("MoreParam", TokensFlow.getToken())) {
+				return analiseMoreParam();
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	//<MoreParam> ::= ','<ObrigatoryParam> | <>
+	public static boolean analiseMoreParam() {
+		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(",")) {
+			return analiseObrigatoryParam();
+		}
+		
+		return false;
+	}
+	
+	//<ObrigatoryParam> ::= <Expression><MoreParam> | CadeCaracters<MoreParam>
+	public static boolean analiseObrigatoryParam() {
+		if(Analyzer.analiseExpression()) {
+			if(TokensFlow.hasNext() && First.check("MoreParam", TokensFlow.getToken())) {
+				return analiseMoreParam();
+			}
+			
+			return true;
+		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("CADEIA_DE_CARACTERES")) {
+			if(TokensFlow.hasNext() && First.check("MoreParam", TokensFlow.getToken())) {
+				return analiseMoreParam();
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
 	
 	
 }

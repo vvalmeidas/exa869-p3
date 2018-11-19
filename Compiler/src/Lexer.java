@@ -281,9 +281,9 @@ public class Lexer {
 			} else  if (state == OperatorFinalStates.CORRECT_OPERATOR_RELATIONAL_FINALSTATE){
 				return "OPERADOR_RELACIONAL";
 			} else if(state == OperatorFinalStates.CORRECT_BLOCK_COMMENT_DELIMITER_FINALSTATE){
-				return "COMENT�RIO DE BLOCO";
+				return "COMENTARIO DE BLOCO";
 			} else {
-				return "COMENT�RIO DE LINHA";
+				return "COMENTARIO DE LINHA";
 			}
 		}
 	}

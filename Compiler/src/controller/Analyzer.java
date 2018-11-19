@@ -3,31 +3,35 @@ package controller;
 import java.util.LinkedList;
 import java.util.List;
 
+import model.First;
 import model.Token;
 import model.TokensFlow;
 
 public class Analyzer {
 	private Token token;
 	
-	public static LinkedList<String> firstElse = new LinkedList<String>() {{
-		add("else");
-	}};
 	
 	public Token nextToken() {
 		return null;
 	}
 	
+	
 	public static boolean analiseExpression() { //<Expression> ::= <And Exp> <A>		
-		if(TokensFlow.hasNext() && AnalyzerSecondary.firstAndExp.contains(TokensFlow.getToken().getValue())) {
+
+		if(TokensFlow.hasNext() && First.check("AndExp", TokensFlow.getToken())) {
+
 			if(AnalyzerSecondary.analiseAndExp()) {
-				if(TokensFlow.hasNext() && AnalyzerSecondary.firstA.contains(TokensFlow.getToken().getValue())) {
+
+				if(TokensFlow.hasNext() && First.check("AndExp", TokensFlow.getToken())) {
 					return AnalyzerSecondary.analiseA();
 				}
+
 				return true;
 			}
 			
 			return true;
-		} else if(TokensFlow.hasNext() && AnalyzerSecondary.firstA.contains(TokensFlow.getToken().getValue())) {
+		} else if(TokensFlow.hasNext() && First.check("A", TokensFlow.getToken())) {
+
 			return AnalyzerSecondary.analiseA();
 		}
 		
@@ -110,7 +114,7 @@ public class Analyzer {
 									if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
 										TokensFlow.next();
 										
-										if(TokensFlow.hasNext() && firstElse.contains(TokensFlow.getToken().getValue())) {
+										if(TokensFlow.hasNext() && First.check("Else", TokensFlow.getToken())) {
 											return AnalyzerSecondary.analiseElse();
 										} 
 										
@@ -130,29 +134,33 @@ public class Analyzer {
 	//<Commands>::= <If Statement><Commands> | <> | <While Statement><Commands> | <Read Statement><Commands>
     //              | <Attribution>';'<Commands> | <Write Statement><Commands> | <Return>';'
 	public static boolean analiseCommands() {
-		if(analiseIf()) {
+		if(analiseIf()) {	
 			return analiseCommands();
-		}
-		else if(analiseWhile()) {
+		} else if(analiseWhile()) {
 			return analiseCommands();
-		}
-		else if(analiseRead()) {
+		} else if(analiseRead()) {
 			return analiseCommands();
-		}
-		else if(analiseAttribution()) {
+		} else if(analiseAttribution()) {
 			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
 				TokensFlow.next();
-				return analiseCommands();
+				
+				if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+
+					return analiseCommands();
+				}
+				
+				return true;
+				
 			}
+			
 			return false;
-		}
-		else if(analiseWrite()) {
+		} else if(analiseWrite()) {
 			return analiseCommands();
-		}
-		else if(analiseReturn()) {
+		} else if(analiseReturn()) {
 			return (TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";"));
 		}
-		return true; // se for vazio tem que tratar em quem chamou
+
+		return false;
 	}
 	
 	//<While Statement> ::= 'while''(' <Expression> ')' '{' <Commands> '}'
@@ -171,13 +179,18 @@ public class Analyzer {
 						if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
 							TokensFlow.next();
 							
-							if(analiseCommands()) {
-								System.out.println(TokensFlow.getToken());
-								if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-									TokensFlow.next();
-									return true;
+							System.out.println(TokensFlow.getToken().getTokenClass());
+							
+							if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+								if(analiseCommands()) {
+									
+									System.out.println(TokensFlow.getToken());
+									if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
+										TokensFlow.next();
+										return true;
+									}
+									
 								}
-								
 							}
 							
 						}
@@ -217,27 +230,60 @@ public class Analyzer {
 	// <Attribution> ::= <Increment>Identifier<Array Verification><Attr> | Identifier<Array Verification><Attr><Verif>
 	public static boolean analiseAttribution() {
 		if(AnalyzerSecondary.analiseIncrement()) {
-			if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("Identifier")) {
-				if(AnalyzerSecondary.analiseArrayVerification()) {
+			
+			if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
+				TokensFlow.next();
+				
+				if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
+					if(AnalyzerSecondary.analiseArrayVerification()) {
+						
+						if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
+							return AnalyzerSecondary.analiseAttr();
+						}
+						
+					}
+				} else if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
 					return AnalyzerSecondary.analiseAttr();
-				}
+				} 
+				
+				return true;
 			}
-			return false;
-		}
-		else if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("Identifier")) {
-			if(AnalyzerSecondary.analiseArrayVerification()) {
+			
+		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) { //segunda regra
+			TokensFlow.next();
+			
+			if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
+				if(AnalyzerSecondary.analiseArrayVerification()) {
+					
+					if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
+						if(AnalyzerSecondary.analiseAttr()) {
+							return AnalyzerSecondary.analiseVerif();
+						}
+					}
+					
+				}
+				
+			} else if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
+				
 				if(AnalyzerSecondary.analiseAttr()) {
 					return AnalyzerSecondary.analiseVerif();
 				}
+				
+			} else {
+				return AnalyzerSecondary.analiseVerif();
 			}
-			return false;
-		}	
+			
+		}
+		
+		
 		return false;
 	}
 	
 	//<Return> ::= 'return' <Return1> 
 	public static boolean analiseReturn() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("return")) {
+			TokensFlow.next();
+			
 			return AnalyzerSecondary.return1();
 		}
 		return false;
