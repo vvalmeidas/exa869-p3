@@ -41,48 +41,16 @@ public class Analyzer {
 
 	public static boolean analiseWrite() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("write")) {
-				
+			TokensFlow.next();
 			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(") ) {
-					
-				while(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("Identificador")  || TokensFlow.getToken().getTokenClass().equals("CadeCharacters")) {
-					if(TokensFlow.getToken().getTokenClass().equals("Identifier")) {
-						//aqui teria que chamar a função de array verification e de chamada a atributo
-							
-						if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(",")) {
-						}
-						else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
-								
-							if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
-								return true;
-							}
-							else {
-								return false;
-							}
-						}
-						else {
-							return false;
-						}
+				TokensFlow.next();	
+				if(AnalyzerSecondary.analiseWriting1()) {
+					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
+						TokensFlow.next();	
+						return TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";");
 					}
-						
-					else if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("CadeCharacters")) {
-							
-						if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(",")) {
-								
-						}
-						else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
-								
-							if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
-								return true;
-							}
-							else {
-								return false;
-							}
-						}
-						else {
-							return false;
-						}
-					}			
-				}								
+				}
+				return false;
 			}
 			return false;
 		}

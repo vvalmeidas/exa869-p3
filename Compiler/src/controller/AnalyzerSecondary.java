@@ -480,6 +480,29 @@ public class AnalyzerSecondary {
 		return false;
 	}
 	
+	//<Writing_1> ::= Identifier<Array Verification><Attr><More Writings> | CadeCaracters<More Writings>
+	public static boolean analiseWriting1() {
+		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
+			TokensFlow.next();
+			if(analiseArrayVerification()) {
+				if(analiseAttr()) {
+					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(",")) {
+						return analiseWriting1();
+					}
+				}
+				return true;//<More Writings> ::= ',' <Writing_1> | <>
+			}
+			return false;
+		}
+		else if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("CADEIA_DE_CARACTERES")) {
+			TokensFlow.next();
+			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(",")) {
+				return analiseWriting1();
+			}
+			return true; //<More Writings> ::= ',' <Writing_1> | <>
+		}
+	}
+	
 	
 	
 }
