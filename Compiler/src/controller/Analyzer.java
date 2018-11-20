@@ -15,6 +15,28 @@ public class Analyzer {
 		return null;
 	}
 	
+	//<Variable Declaration> ::= 'variables' '{' <Variable> '}' | <> 
+	public static boolean analiseVariableDeclaration() {
+		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("variables")) {
+			TokensFlow.next();
+			
+			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
+				TokensFlow.next();
+				
+				if(AnalyzerSecondary.analiseVariable()) {
+					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
+						TokensFlow.next();
+						return true;
+					}
+				}
+				
+			}
+			
+		}
+		
+		return false;
+	}
+	
 	
 	public static boolean analiseExpression() { //<Expression> ::= <And Exp> <A>		
 
@@ -286,6 +308,31 @@ public class Analyzer {
 			
 			return AnalyzerSecondary.return1();
 		}
+		return false;
+	}
+	
+	//<Write Statement> ::= 'write''('<Writing_1>')' ';'
+	public static boolean analiseWriteStatement() {
+		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("write")) {
+			TokensFlow.next();
+			
+			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(")) {
+				TokensFlow.next();
+				
+				if(TokensFlow.hasNext() && AnalyzerSecondary.analiseWriting1()) {
+					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
+						TokensFlow.next();
+						
+						if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
+							TokensFlow.next();
+							
+							return true;
+						}
+					}
+				}
+			}
+		}
+		
 		return false;
 	}
 	

@@ -104,6 +104,21 @@ public class First {
 		add("NUMERO");
 	}};
 	
+	public static LinkedList<String> MoreWritings = new LinkedList<String>() {{
+		add(",");
+	}};
+	
+	public static LinkedList<String> MoreVariables = new LinkedList<String>() {{
+		add("IDENTIFICADOR");
+		add("int");
+		add("float");
+		add("bool");
+		add("string");
+		add("void");
+	}};
+	
+	
+	
 	public static boolean check(String production, Token token) {
 		if(production == "Else") {
 			return Else.contains(token.getValue()) || Else.contains(token.getTokenClass()); 
@@ -137,7 +152,11 @@ public class First {
 			return MoreParam.contains(token.getValue()) || MoreParam.contains(token.getTokenClass()); 
 		} else if(production == "Param") {
 			return Param.contains(token.getValue()) || Param.contains(token.getTokenClass()); 
-		}  
+		} else if(production == "MoreWritings") {
+			return MoreWritings.contains(token.getValue()) || MoreWritings.contains(token.getTokenClass()); 
+		} else if(production == "MoreVariables") {	
+			return MoreVariables.contains(token.getValue().toLowerCase()) || MoreVariables.contains(token.getTokenClass()); 
+		}
 	
 		return false;
 	}

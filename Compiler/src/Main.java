@@ -43,15 +43,14 @@ public class Main {
 		tokens.add(new Token("a", "{", 0));
 		tokens.add(new Token("IDENTIFICADOR", "a", 0));
 		tokens.add(new Token("OPERADOR_RELACIONAL", "=", 0));
-		tokens.add(new Token("OPERADOR_RELACIONAL", "+", 0));
+		tokens.add(new Token("OPERADOR_RELACIONAL", "++", 0));
 		tokens.add(new Token("NUMERO", "1", 0));
 		tokens.add(new Token("OPERADOR_ARITMETICO", "*", 0));
 		tokens.add(new Token("NUMERO", "3", 0));
 		tokens.add(new Token("DELIMITADOR", ";", 0));
 		tokens.add(new Token("a", "}", 0));
 		
-		//TODO: Fazer complement
-
+		//TODO: Fiz variables, não testei
 		
 		TokensFlow.setTokensSet(tokens);
 		
