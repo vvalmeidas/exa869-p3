@@ -80,6 +80,7 @@ public class Analyzer {
 	
 	public static boolean analiseExpression() { //<Expression> ::= <Add Exp><Relational Exp>		
 		if(AnalyzerSecondary.analiseAddExp()) {
+			
 			return AnalyzerSecondary.analiseRelExp();
 		}
 		

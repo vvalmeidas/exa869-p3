@@ -229,23 +229,24 @@ public class AnalyzerSecondary {
 	
 	
 	public static boolean analiseRelExp() {//<Relational Exp> ::= RelationalOperator <Add Exp> <Logical Exp> | <Logical Exp>
-		if(TokensFlow.hasNext() && (TokensFlow.getToken().getValue().equals("==") ||
-			TokensFlow.getToken().getValue().equals(">") ||
-			TokensFlow.getToken().getValue().equals("<") ||
-			TokensFlow.getToken().getValue().equals(">=") ||
-			TokensFlow.getToken().getValue().equals("<=") ||
-			TokensFlow.getToken().getValue().equals("!="))) {				
-			
-				if(analiseAddExp()) {
-					return analiseLogicalExp();
-				}
-		}
 		
+		if(TokensFlow.hasNext() && (TokensFlow.getToken().getValue().equals("==") ||
+					TokensFlow.getToken().getValue().equals(">") ||
+					TokensFlow.getToken().getValue().equals("<") ||
+					TokensFlow.getToken().getValue().equals(">=") ||
+					TokensFlow.getToken().getValue().equals("<=") ||
+					TokensFlow.getToken().getValue().equals("!="))) {
+			TokensFlow.next();
+			if(analiseAddExp()) {
+				return analiseLogicalExp();
+			}
+		
+		}
+			 									
 		else {
 			
 			return analiseLogicalExp();
 		}
-		
 		return false;
 	}
 	
@@ -262,16 +263,15 @@ public class AnalyzerSecondary {
 	//<Add Exp> ::= <Mult Exp> <D>
 	public static boolean analiseAddExp() { 		
 		if(analiseMultExp()) {
-			
 			if(TokensFlow.hasNext() && First.check("D", TokensFlow.getToken())) {	
 				
 				return analiseD();
 			}
-			
 			return true;
 		}	
-		
-		return false;
+		else {
+			return false;
+		}
 	}
 	
 	public static boolean analiseD() { //<D> ::= '+' <Add Exp> | '-' <Add Exp> | <>
@@ -279,7 +279,6 @@ public class AnalyzerSecondary {
 			TokensFlow.next();
 			return analiseAddExp();
 		}
-		
 		return true;
 	}
 	
