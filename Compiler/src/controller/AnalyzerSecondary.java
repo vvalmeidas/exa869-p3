@@ -229,18 +229,20 @@ public class AnalyzerSecondary {
 	
 	
 	public static boolean analiseRelExp() {//<Relational Exp> ::= RelationalOperator <Add Exp> <Logical Exp> | <Logical Exp>
-		if(TokensFlow.hasNext() && First.check("AddExp", TokensFlow.getToken())) {
+		if(TokensFlow.hasNext() && (TokensFlow.getToken().getValue().equals("==") ||
+			TokensFlow.getToken().getValue().equals(">") ||
+			TokensFlow.getToken().getValue().equals("<") ||
+			TokensFlow.getToken().getValue().equals(">=") ||
+			TokensFlow.getToken().getValue().equals("<=") ||
+			TokensFlow.getToken().getValue().equals("!="))) {				
 			
-			
-			if(analiseAddExp()) {
-				
-				if(TokensFlow.hasNext() && First.check("LogicalExp", TokensFlow.getToken())) {
+				if(analiseAddExp()) {
 					return analiseLogicalExp();
 				}
-				
-			}
 		}
-		else if(TokensFlow.hasNext() && First.check("LogicalExp", TokensFlow.getToken())) {
+		
+		else {
+			
 			return analiseLogicalExp();
 		}
 		
@@ -249,19 +251,19 @@ public class AnalyzerSecondary {
 	
 	//<Logical Exp> ::= '||' <Expression> | '&&' <Expression> | <>  
 	public static boolean analiseLogicalExp() {
-		if(TokensFlow.hasNext() && First.check("Expression", TokensFlow.getToken())) {
+		
+		if(TokensFlow.hasNext() && (TokensFlow.getToken().getValue().equals("||") || TokensFlow.getToken().getValue().equals("&&"))) {
 			return Analyzer.analiseExpression();
 		}
 		
-		return false; //MUDAR PARA TRUE?
+		return true; //MUDAR PARA TRUE?
 	}
 
 	//<Add Exp> ::= <Mult Exp> <D>
-	public static boolean analiseAddExp() { 
-		System.out.println("Entrou aqui" + TokensFlow.getToken());
+	public static boolean analiseAddExp() { 		
 		if(analiseMultExp()) {
 			
-			if(TokensFlow.hasNext() && First.check("D", TokensFlow.getToken())) {
+			if(TokensFlow.hasNext() && First.check("D", TokensFlow.getToken())) {	
 				
 				return analiseD();
 			}
@@ -278,17 +280,13 @@ public class AnalyzerSecondary {
 			return analiseAddExp();
 		}
 		
-		return false;
+		return true;
 	}
 	
 	public static boolean analiseMultExp() { // <Mult Exp> ::= <Neg Exp> <E>
 		if(analiseNegExp()) {
 			
-			if(TokensFlow.hasNext() && First.check("E", TokensFlow.getToken())) {
 				return analiseE();
-			}
-			
-			return true;
 		}
 		
 		return false;
@@ -304,7 +302,7 @@ public class AnalyzerSecondary {
 			return analiseMultExp();
 		}
 		
-		return false;
+		return true;
 	}
 	//<Neg Exp>  ::= '-' <Exp Value> |  <Exp Value> <G> | '!' <Exp Value> | '++' <Exp Value> | '--'<Exp Value>
 	public static boolean analiseNegExp() { 
@@ -346,7 +344,7 @@ public class AnalyzerSecondary {
 			return true;
 		}
 		
-		return false;
+		return true;
 	}
 	
 	public static boolean analiseExpValue() { //<Exp Value> ::= Number |  '(' <Expression> ')' |  Identifier<Array Verification><Attr><Param2> | 'true' | 'false' 
@@ -359,7 +357,7 @@ public class AnalyzerSecondary {
 					return true;
 				}
 			}
-		} else if(TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) { 
+		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) { 
 			TokensFlow.next();
 			
 			if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {

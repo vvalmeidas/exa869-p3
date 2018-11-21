@@ -79,15 +79,8 @@ public class Analyzer {
 	
 	
 	public static boolean analiseExpression() { //<Expression> ::= <Add Exp><Relational Exp>		
-		
-		if(TokensFlow.hasNext() && First.check("AddExp", TokensFlow.getToken())) {
-			
-			if(AnalyzerSecondary.analiseAddExp()) {
-				
-				if(TokensFlow.hasNext() && First.check("RelationalExp", TokensFlow.getToken())) {
-					return AnalyzerSecondary.analiseRelExp();
-				}
-			}
+		if(AnalyzerSecondary.analiseAddExp()) {
+			return AnalyzerSecondary.analiseRelExp();
 		}
 		
 		return false;
