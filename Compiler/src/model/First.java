@@ -117,7 +117,35 @@ public class First {
 		add("void");
 	}};
 	
+	public static LinkedList<String> MoreConstants = new LinkedList<String>() {{
+		add(",");
+		add(";");
+		add("int");
+		add("float");
+		add("bool");
+		add("string");
+		add("void");
+	}};
 	
+	public static LinkedList<String> VariableDeclaration = new LinkedList<String>() {{
+		add("variables");
+	}};	
+	
+	public static LinkedList<String> ClassMethods = new LinkedList<String>() {{
+		add("method");
+	}};
+	
+	public static LinkedList<String> ClassHeritage = new LinkedList<String>() {{
+		add("extends");
+	}};
+	
+	public static LinkedList<String> ConstantDeclaration = new LinkedList<String>() {{
+		add("const");
+	}};
+	
+	public static LinkedList<String> MoreClasses = new LinkedList<String>() {{
+		add("class");
+	}};
 	
 	public static boolean check(String production, Token token) {
 		if(production == "Else") {
@@ -156,8 +184,20 @@ public class First {
 			return MoreWritings.contains(token.getValue()) || MoreWritings.contains(token.getTokenClass()); 
 		} else if(production == "MoreVariables") {	
 			return MoreVariables.contains(token.getValue().toLowerCase()) || MoreVariables.contains(token.getTokenClass()); 
+		} else if(production == "MoreConstants") {	
+			return MoreConstants.contains(token.getValue()) || MoreConstants.contains(token.getTokenClass()); 
+		} else if(production == "VariableDeclaration") {	
+			return VariableDeclaration.contains(token.getValue()) || VariableDeclaration.contains(token.getTokenClass()); 
+		} else if(production == "ClassMethods") {	
+			return ClassMethods.contains(token.getValue()) || ClassMethods.contains(token.getTokenClass()); 
+		} else if(production == "ClassHeritage") {	
+			return ClassHeritage.contains(token.getValue()) || ClassHeritage.contains(token.getTokenClass()); 
+		} else if(production == "ConstantDeclaration") {	
+			return ConstantDeclaration.contains(token.getValue()) || ConstantDeclaration.contains(token.getTokenClass()); 
+		}else if(production == "MoreClasses") {	
+			return MoreClasses.contains(token.getValue()) || MoreClasses.contains(token.getTokenClass()); 
 		}
-	
+		
 		return false;
 	}
 	

@@ -50,7 +50,7 @@ public class Main {
 		tokens.add(new Token("DELIMITADOR", ";", 0));
 		tokens.add(new Token("a", "}", 0));
 		
-		//TODO: Fiz variables, não testei
+		//TODO: Tem que finalizar classmethods e global
 		
 		TokensFlow.setTokensSet(tokens);
 		

@@ -5,9 +5,152 @@ import java.util.LinkedList;
 import model.First;
 import model.Token;
 import model.TokensFlow;
+import model.Util;
 
 public class AnalyzerSecondary {
 	
+	//<More Classes> ::= <Class Declaration><More Classes> | <>
+	
+	//<Class Identification> ::= Identifier <Class Heritage> '{' <Class Body> '}'
+	public static boolean analiseClassIdentification() {
+		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
+			TokensFlow.next();
+			
+			if(TokensFlow.hasNext() && First.check("ClassHeritage", TokensFlow.getToken())) {
+				if(analiseClassHeritage()) {
+					
+					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
+						TokensFlow.next();
+						
+						if(analiseClassBody()) {
+							if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
+								TokensFlow.next();
+								return true;
+							}
+						}
+						
+						
+					}
+				}
+ 			} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
+				TokensFlow.next();
+				
+				if(analiseClassBody()) {
+					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
+						TokensFlow.next();
+						return true;
+					}
+				}
+			}
+			
+		}
+		
+		return false;
+	}
+	
+	//<Class Heritage> ::= 'extends' Identifier | <>
+	public static boolean analiseClassHeritage() {
+		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("extends")) {
+			TokensFlow.next();
+			
+			if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
+				TokensFlow.next();
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	//<Class Body> ::= <Class Attributes> <Class Methods>
+	public static boolean analiseClassBody() {
+		if(analiseClassAttributes()) {
+			
+			if(TokensFlow.hasNext() && First.check("ClassMethods", TokensFlow.getToken())) {
+				return analiseClassMethods();
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	//<Class Attributes> ::= <Variable Declaration> 
+	public static boolean analiseClassAttributes() {
+		if(TokensFlow.hasNext() && First.check("VariableDeclaration", TokensFlow.getToken())) {
+			return Analyzer.analiseVariableDeclaration();
+		}
+		
+		return false;
+	}
+	
+	//<Class Methods> ::= <Method Declaration> | <>
+	public static boolean analiseClassMethods() {
+		
+		return false;
+	}
+	
+	//<Constants> ::= <Constant> <More Constants>  
+	public static boolean analiseConstants() {
+		if(analiseConstant()) {
+			if(TokensFlow.hasNext() && First.check("MoreConstants", TokensFlow.getToken())) {
+				return analiseMoreConstants();
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	//<More Constants> ::= <> | <Constants>
+	public static boolean analiseMoreConstants() {
+		return analiseConstants();
+	}
+	
+	//<Constant> ::= Type <ConstAttribution> | <More Attributions>
+	public static boolean analiseConstant() {
+		if(TokensFlow.hasNext() && Util.isType(TokensFlow.getToken())) {
+			TokensFlow.next();
+			
+			return analiseConstAttribution();
+		} else {
+			return analiseMoreAttributions();
+		}
+		
+	}
+	
+	//<More Attributions> ::= ',' <ConstAttribution> | ';'
+	public static boolean analiseMoreAttributions() {
+		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(",")) {
+			TokensFlow.next();
+			
+			return analiseConstAttribution();
+		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
+			TokensFlow.next();
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	//<ConstAttribution> ::= Identifier '=' <Value>
+	public static boolean analiseConstAttribution() {
+		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
+			TokensFlow.next();
+			
+			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("=")) {
+				TokensFlow.next();
+				
+				return analiseValue();
+				
+			}
+		}
+		
+		return false;
+	}
 	
 	
 	//<Variable> ::= Type <Variable2> | Identifier <Variable2>
@@ -459,6 +602,8 @@ public class AnalyzerSecondary {
 				|| TokensFlow.getToken().getValue().equals("true")
 				|| TokensFlow.getToken().getValue().equals("false")
 				) {
+			
+			TokensFlow.next();
 			return true;
 		}
 		return false;

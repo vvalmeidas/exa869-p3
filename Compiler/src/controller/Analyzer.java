@@ -8,12 +8,52 @@ import model.Token;
 import model.TokensFlow;
 
 public class Analyzer {
-	private Token token;
 	
-	
-	public Token nextToken() {
-		return null;
+	//<Global> ::= <Constant Declaration> <Class Declaration> <More Classes>
+	public static boolean analiseGlobal() {
+		if(TokensFlow.hasNext() && First.check("ConstantDeclaration", TokensFlow.getToken())) {
+			if(analiseConstantDeclaration()) {
+				
+			}
+		}
+		
+		return false;
 	}
+	
+	//<Class Declaration> ::= 'class' <Class Identification>
+	public static boolean analiseClassDeclaration() {
+		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("class")) {
+			TokensFlow.next();
+			
+			if(AnalyzerSecondary.analiseClassIdentification()) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	//<Constant Declaration> ::= 'const' '{' <Constants> '}' | <> 
+	public static boolean analiseConstantDeclaration() {
+		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("const")) {
+			TokensFlow.next();
+			
+			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
+				TokensFlow.next();
+				
+				if(AnalyzerSecondary.analiseConstants()) {
+					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
+						TokensFlow.next();
+						
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	
 	
 	//<Variable Declaration> ::= 'variables' '{' <Variable> '}' | <> 
 	public static boolean analiseVariableDeclaration() {
