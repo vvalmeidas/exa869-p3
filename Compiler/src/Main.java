@@ -58,20 +58,21 @@ public class Main {
 		tokens.add(new Token("IDENTIFICADOR", "b", 0));*/
 				
 		
-		//a>b!a+b-3++
+		//a > b!a+b-3++
+		// a > b
 		
 		tokens.add(new Token("IDENTIFICADOR", "a", 0));
 		tokens.add(new Token("OPERADOR_RELACIONAL", ">", 0));
 		tokens.add(new Token("IDENTIFICADOR", "b", 0));
-		
-		tokens.add(new Token("OPERADOR_LOGICO", "!", 0));
-		tokens.add(new Token("IDENTIFICADOR", "a", 0));
-		tokens.add(new Token("OPERADOR_ARITMETICO", "+", 0));
-		tokens.add(new Token("IDENTIFICADOR", "b", 0));
-
-		tokens.add(new Token("OPERADOR_ARITMETICO", "-", 0));
-		tokens.add(new Token("NUMERO", "3", 0));
-		tokens.add(new Token("OPERADOR_RELACIONAL", "++", 0));
+//		
+//		tokens.add(new Token("OPERADOR_LOGICO", "!", 0));
+//		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+//		tokens.add(new Token("OPERADOR_ARITMETICO", "+", 0));
+//		tokens.add(new Token("IDENTIFICADOR", "b", 0));
+//
+//		tokens.add(new Token("OPERADOR_ARITMETICO", "-", 0));
+//		tokens.add(new Token("NUMERO", "3", 0));
+//		tokens.add(new Token("OPERADOR_RELACIONAL", "++", 0));
 		
 		
 		TokensFlow.setTokensSet(tokens);
