@@ -228,62 +228,41 @@ public class AnalyzerSecondary {
 	}
 	
 	
-	public static boolean analiseA() { //<A> ::= '||' <Expression> | <> 
-		if(TokensFlow.getToken().getValue().equals("||")) { 
-			TokensFlow.next();
+	public static boolean analiseRelExp() {//<Relational Exp> ::= RelationalOperator <Add Exp> <Logical Exp> | <Logical Exp>
+		if(TokensFlow.hasNext() && First.check("AddExp", TokensFlow.getToken())) {
+			
+			
+			if(analiseAddExp()) {
+				
+				if(TokensFlow.hasNext() && First.check("LogicalExp", TokensFlow.getToken())) {
+					return analiseLogicalExp();
+				}
+				
+			}
+		}
+		else if(TokensFlow.hasNext() && First.check("LogicalExp", TokensFlow.getToken())) {
+			return analiseLogicalExp();
+		}
+		
+		return false;
+	}
+	
+	//<Logical Exp> ::= '||' <Expression> | '&&' <Expression> | <>  
+	public static boolean analiseLogicalExp() {
+		if(TokensFlow.hasNext() && First.check("Expression", TokensFlow.getToken())) {
 			return Analyzer.analiseExpression();
 		}
+		
+		return false; //MUDAR PARA TRUE?
+	}
 
-		return false;
-	}
-	
-	public static boolean analiseAndExp() {//<And Exp> ::= <Rel Exp> <B>   
-		if(analiseRelExp()) {
-			if(TokensFlow.hasNext() && First.check("B", TokensFlow.getToken())) {
-				return analiseB();
-			}
-						
-			return true;
-		}
-		
-		return false;
-	}
-	
-	public static boolean analiseB() {		
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("&&")) { //<B> ::= '&&' <And Exp> | <> 
-			TokensFlow.next();
-			return analiseAndExp();
-		}
-		
-		return false;
-	}
-	
-	public static boolean analiseRelExp() {//<Rel Exp>::= <Add Exp> <C>
-		if(analiseAddExp()) {
-			if(TokensFlow.hasNext() && First.check("C", TokensFlow.getToken())) {
-				return analiseC();
-			}
-			
-			return true;
-		}
-		
-		return false;
-	}
-	
-	
-	public static boolean analiseC() { //<C> ::= RelationalOperator <Rel Exp> | <>
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("OPERADOR_RELACIONAL")) { //<C>
-			TokensFlow.next();
-			return analiseRelExp();
-		}
-
-		return false;
-	}
-	
-	public static boolean analiseAddExp() { //<Add Exp> ::= <Mult Exp> <D>
+	//<Add Exp> ::= <Mult Exp> <D>
+	public static boolean analiseAddExp() { 
+		System.out.println("Entrou aqui" + TokensFlow.getToken());
 		if(analiseMultExp()) {
 			
 			if(TokensFlow.hasNext() && First.check("D", TokensFlow.getToken())) {
+				
 				return analiseD();
 			}
 			
@@ -304,6 +283,7 @@ public class AnalyzerSecondary {
 	
 	public static boolean analiseMultExp() { // <Mult Exp> ::= <Neg Exp> <E>
 		if(analiseNegExp()) {
+			
 			if(TokensFlow.hasNext() && First.check("E", TokensFlow.getToken())) {
 				return analiseE();
 			}
@@ -318,6 +298,7 @@ public class AnalyzerSecondary {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("*")) {
 			TokensFlow.next();
 			return analiseMultExp();
+			
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("/")) {
 			TokensFlow.next();
 			return analiseMultExp();
@@ -325,29 +306,26 @@ public class AnalyzerSecondary {
 		
 		return false;
 	}
-	
-	public static boolean analiseNegExp() { //<Neg Exp>  ::= '-' <F> |  <Exp Value> <G> | '!' <H><Exp Value> | '++' <Exp Value> | '--'<Exp Value>
-		//inicio <Neg Exp>
+	//<Neg Exp>  ::= '-' <Exp Value> |  <Exp Value> <G> | '!' <Exp Value> | '++' <Exp Value> | '--'<Exp Value>
+	public static boolean analiseNegExp() { 
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("-")) { //'-' <F>
 			TokensFlow.next();
-			return analiseF();
+			return analiseExpValue();
+			
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("!")) {
 			TokensFlow.next();
+			return analiseExpValue();
 			
-			if(TokensFlow.hasNext() && First.check("H", TokensFlow.getToken())) {
-				if(analiseH()) {
-					return analiseExpValue();
-				}
-			}
-			
-			return true;
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("++")) {
 			TokensFlow.next();
 			return analiseExpValue();
+			
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("--")) {
 			TokensFlow.next();
 			return analiseExpValue();
+			
 		} else if(analiseExpValue()) {
+			
 			if(TokensFlow.hasNext() && First.check("G", TokensFlow.getToken())) {
 				return analiseG();
 			}
@@ -357,15 +335,6 @@ public class AnalyzerSecondary {
 		
 		return false;
 	}
-	
-	//<F> ::= '-' <Exp Value> | <Exp Value>
-	public static boolean analiseF() {
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("-")) {
-			return analiseExpValue();
-		} 
-		
-		return analiseExpValue();
-	}
 
 	//<G> ::= '--' | '++' | <>
 	public static boolean analiseG() {
@@ -374,21 +343,6 @@ public class AnalyzerSecondary {
 			return true;
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("++")) {
 			TokensFlow.next();
-			return true;
-		}
-		
-		return false;
-	}
-
-	//<H> ::= '!'<H> | <> 
-	public static boolean analiseH() {
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("!")) {
-			TokensFlow.next();
-			
-			if(TokensFlow.hasNext() && First.check("H", TokensFlow.getToken())) {
-				return analiseH();
-			}
-			
 			return true;
 		}
 		

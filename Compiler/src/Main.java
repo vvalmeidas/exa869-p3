@@ -36,7 +36,7 @@ public class Main {
 		tokens.add(new Token("a", "}", 0));*/
 		
 
-		tokens.add(new Token("a", "while", 0));
+		/*tokens.add(new Token("a", "while", 0));
 		tokens.add(new Token("a", "(", 0));
 		tokens.add(new Token("a", "true", 0));
 		tokens.add(new Token("a", ")", 0));
@@ -48,13 +48,22 @@ public class Main {
 		tokens.add(new Token("OPERADOR_ARITMETICO", "*", 0));
 		tokens.add(new Token("NUMERO", "3", 0));
 		tokens.add(new Token("DELIMITADOR", ";", 0));
-		tokens.add(new Token("a", "}", 0));
+		tokens.add(new Token("a", "}", 0));*/
 		
 		//TODO: Tem que finalizar classmethods e global
 		
+		//a-b
+
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		tokens.add(new Token("OPERADOR_ARITMETICO", "-", 0));
+		tokens.add(new Token("IDENTIFICADOR", "b", 0));
+		
+		
 		TokensFlow.setTokensSet(tokens);
 		
-		System.out.println(Analyzer.analiseWhile());
+		System.out.println(Analyzer.analiseExpression());
+		
+		//System.out.println(Analyzer.analiseWhile());
 		
 		//System.out.println(Analyzer.analiseIf());
 	}

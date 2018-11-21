@@ -28,11 +28,23 @@ public class First {
 		add("IDENTIFICADOR");
 	}};
 	
+	public static LinkedList<String> Expression = new LinkedList<String>() {{
+		add("-");
+		add("--");
+		add("!");
+		add("(");
+		add("++");
+		add("false");
+		add("true");
+		add("IDENTIFICADOR");
+		add("NUMERO");
+	}};
+	
 	public static LinkedList<String> A = new LinkedList<String>() {{
 		add("||");
 	}};
 	
-	public static LinkedList<String> AndExp = new LinkedList<String>() {{
+	public static LinkedList<String> AddExp = new LinkedList<String>() {{
 		add("-");
 		add("--");
 		add("!");
@@ -69,6 +81,22 @@ public class First {
 	
 	public static LinkedList<String> H = new LinkedList<String>() {{
 		add("!");
+	}};
+	
+	public static LinkedList<String> RelationalExp = new LinkedList<String>() {{
+		add("&&");
+		add("||");
+		add("==");
+		add(">");
+		add("<");
+		add(">=");
+		add("<=");
+		add("!=");
+	}};
+	
+	public static LinkedList<String> LogicalExp = new LinkedList<String>() {{
+		add("&&");
+		add("||");
 	}};
 	
 	public static LinkedList<String> DoubleArray = new LinkedList<String>() {{
@@ -152,10 +180,12 @@ public class First {
 			return Else.contains(token.getValue()) || Else.contains(token.getTokenClass()); 
 		} else if(production == "Commands") {
 			return Commands.contains(token.getValue()) || Commands.contains(token.getTokenClass()); 
+		} else if(production == "Expression") {
+			return Expression.contains(token.getValue()) || Expression.contains(token.getTokenClass()); 
 		} else if(production == "A") {
 			return A.contains(token.getValue()) || A.contains(token.getTokenClass()); 
-		} else if(production == "AndExp") {
-			return AndExp.contains(token.getValue()) || AndExp.contains(token.getTokenClass()); 
+		} else if(production == "AddExp") {
+			return AddExp.contains(token.getValue()) || AddExp.contains(token.getTokenClass()); 
 		} else if(production == "B") {
 			return B.contains(token.getValue()) || B.contains(token.getTokenClass()); 
 		} else if(production == "C") {
@@ -168,6 +198,10 @@ public class First {
 			return G.contains(token.getValue()) || G.contains(token.getTokenClass()); 
 		} else if(production == "H") {
 			return H.contains(token.getValue()) || H.contains(token.getTokenClass()); 
+		} else if(production == "RelationalExp") {
+			return RelationalExp.contains(token.getValue()) || RelationalExp.contains(token.getTokenClass()); 
+		} else if(production == "LogicalExp") {
+			return LogicalExp.contains(token.getValue()) || LogicalExp.contains(token.getTokenClass()); 
 		} else if(production == "DoubleArray") {
 			return DoubleArray.contains(token.getValue()) || DoubleArray.contains(token.getTokenClass()); 
 		} else if(production == "ArrayVerification") {

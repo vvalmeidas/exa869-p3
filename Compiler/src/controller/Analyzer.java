@@ -78,23 +78,16 @@ public class Analyzer {
 	}
 	
 	
-	public static boolean analiseExpression() { //<Expression> ::= <And Exp> <A>		
-
-		if(TokensFlow.hasNext() && First.check("AndExp", TokensFlow.getToken())) {
-
-			if(AnalyzerSecondary.analiseAndExp()) {
-
-				if(TokensFlow.hasNext() && First.check("AndExp", TokensFlow.getToken())) {
-					return AnalyzerSecondary.analiseA();
-				}
-
-				return true;
-			}
+	public static boolean analiseExpression() { //<Expression> ::= <Add Exp><Relational Exp>		
+		
+		if(TokensFlow.hasNext() && First.check("AddExp", TokensFlow.getToken())) {
 			
-			return true;
-		} else if(TokensFlow.hasNext() && First.check("A", TokensFlow.getToken())) {
-
-			return AnalyzerSecondary.analiseA();
+			if(AnalyzerSecondary.analiseAddExp()) {
+				
+				if(TokensFlow.hasNext() && First.check("RelationalExp", TokensFlow.getToken())) {
+					return AnalyzerSecondary.analiseRelExp();
+				}
+			}
 		}
 		
 		return false;
