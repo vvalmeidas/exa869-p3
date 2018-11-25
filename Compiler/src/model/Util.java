@@ -13,11 +13,11 @@ public class Util {
 	
 	public static boolean isType(Token token) {
 		if(token.getTokenClass().equals("PALAVRA_RESERVADA")) {
-			if(token.getValue().toLowerCase().equals("int") || 
-				token.getValue().toLowerCase().equals("float") ||
-				token.getValue().toLowerCase().toLowerCase().equals("bool") ||
-				token.getValue().toLowerCase().equals("string") ||
-				token.getValue().toLowerCase().equals("void")) {
+			if(token.getValue().equals("int") || 
+				token.getValue().equals("float") ||
+				token.getValue().equals("bool") ||
+				token.getValue().equals("string") ||
+				token.getValue().equals("void")) {
 				
 				return true;
 			}

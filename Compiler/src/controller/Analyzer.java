@@ -6,6 +6,7 @@ import java.util.List;
 import model.First;
 import model.Token;
 import model.TokensFlow;
+import model.Util;
 
 public class Analyzer {
 	
@@ -13,7 +14,21 @@ public class Analyzer {
 	public static boolean analiseGlobal() {
 		if(TokensFlow.hasNext() && First.check("ConstantDeclaration", TokensFlow.getToken())) {
 			if(analiseConstantDeclaration()) {
-				
+				if(analiseClassDeclaration()) {
+
+					if(TokensFlow.hasNext() && First.check("MoreClasses", TokensFlow.getToken())) {
+						return AnalyzerSecondary.analiseMoreClasses();
+					} else {
+						return true;
+					}
+				}
+			}
+		} else if(analiseClassDeclaration()) {
+
+			if(TokensFlow.hasNext() && First.check("MoreClasses", TokensFlow.getToken())) {
+				return AnalyzerSecondary.analiseMoreClasses();
+			} else {
+				return true;
 			}
 		}
 		
@@ -40,11 +55,10 @@ public class Analyzer {
 			
 			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
 				TokensFlow.next();
-				
+
 				if(AnalyzerSecondary.analiseConstants()) {
 					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
 						TokensFlow.next();
-						
 						return true;
 					}
 				}
@@ -59,67 +73,196 @@ public class Analyzer {
 	public static boolean analiseVariableDeclaration() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("variables")) {
 			TokensFlow.next();
-			
+
 			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
 				TokensFlow.next();
-				
+
 				if(AnalyzerSecondary.analiseVariable()) {
+
 					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
 						TokensFlow.next();
 						return true;
 					}
 				}
+			}
+		}
+		
+		return false;
+	}
+	
+	//<Method Declaration> ::= 'method' <Type> Identifier '(' <Parameter Declaration> ')' '{' <Variable Declaration> <Commands> '}' <More Methods>
+	public static boolean analiseMethodDeclaration() {
+		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("method")) {
+			TokensFlow.next();
+
+			if(AnalyzerSecondary.analiseType()) {
+
 				
-			}
-			
-		}
-		
-		return false;
-	}
-	
-	
-	public static boolean analiseExpression() { //<Expression> ::= <And Exp> <A>		
+				if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
+					TokensFlow.next();
+					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(")) {
+						TokensFlow.next();
 
-		if(TokensFlow.hasNext() && First.check("AndExp", TokensFlow.getToken())) {
+						if(TokensFlow.hasNext() && First.check("ParameterDeclaration", TokensFlow.getToken())) {
 
-			if(AnalyzerSecondary.analiseAndExp()) {
+							if(AnalyzerSecondary.analiseParameterDeclaration()) {
+								if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
+									TokensFlow.next();
+									
+									if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
+										TokensFlow.next();
+										
+										if(TokensFlow.hasNext() && First.check("VariableDeclaration", TokensFlow.getToken())) { 
+											if(analiseVariableDeclaration()) {
+												if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+													if(analiseCommands()) {
+														if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
+															TokensFlow.next();
+															
+															if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+																return AnalyzerSecondary.analiseMoreMethods();
+															} else {
+																return true;
+															}
+														}
+													}
+												} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
+													TokensFlow.next();
+													
+													if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+														return AnalyzerSecondary.analiseMoreMethods();
+													} else {
+														return true;
+													}
+												}
+											}
+										} else {
+											if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+												if(analiseCommands()) {
+													if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
+														TokensFlow.next();
+														
+														if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+															return AnalyzerSecondary.analiseMoreMethods();
+														} else {
+															return true;
+														}
+													}
+												}
+											} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
+												TokensFlow.next();
+												
+												if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+													return AnalyzerSecondary.analiseMoreMethods();
+												} else {
+													return true;
+												}
+											}
+										}
+										
+									}
+								}
+							}
+								
+						} else {
+							if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
+								TokensFlow.next();
+								if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
+									TokensFlow.next();
 
-				if(TokensFlow.hasNext() && First.check("AndExp", TokensFlow.getToken())) {
-					return AnalyzerSecondary.analiseA();
+									if(TokensFlow.hasNext() && First.check("VariableDeclaration", TokensFlow.getToken())) { 
+										if(analiseVariableDeclaration()) {
+											if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+												if(analiseCommands()) {
+													if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
+														TokensFlow.next();
+														
+														if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+															return AnalyzerSecondary.analiseMoreMethods();
+														} else {
+															return true;
+														}
+													}
+												}
+											} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
+												TokensFlow.next();
+												
+												if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+													return AnalyzerSecondary.analiseMoreMethods();
+												} else {
+													return true;
+												}
+											}
+										}
+									} else {
+										if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+											if(analiseCommands()) {
+												if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
+													TokensFlow.next();
+
+													if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+														return AnalyzerSecondary.analiseMoreMethods();
+													} else {
+														return true;
+													}
+												}
+											}
+										} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
+											TokensFlow.next();
+											
+											if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+												return AnalyzerSecondary.analiseMoreMethods();
+											} else {
+												return true;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
 				}
-
-				return true;
 			}
 			
-			return true;
-		} else if(TokensFlow.hasNext() && First.check("A", TokensFlow.getToken())) {
-
-			return AnalyzerSecondary.analiseA();
 		}
 		
 		return false;
+	}
+	
+	//<Expression> ::= <Add Exp><Relational Exp>
+	public static boolean analiseExpression() { 	
+		if(AnalyzerSecondary.analiseAddExp()) {
+			return AnalyzerSecondary.analiseRelationalExp();
+		}
 		
+		return false;
 	}
 
-	public static boolean analiseWrite() {
+	//<Write Statement> ::= 'write''('<Writing_1>')' ';'
+	public static boolean analiseWriteStatement() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("write")) {
 			TokensFlow.next();
+			
 			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(") ) {
 				TokensFlow.next();	
+				
 				if(AnalyzerSecondary.analiseWriting1()) {
 					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
 						TokensFlow.next();	
-						return TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";");
+						
+						if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
+							TokensFlow.next();
+							return true;
+						}
 					}
 				}
-				return false;
 			}
-			return false;
 		}
+		
 		return false;
 	}
 	
-	
+	//<If Statement> ::= 'if''('<Expression>')' 'then' '{'<Commands>'}'<Else Statement>
 	public static boolean analiseIf() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("if")) {
 			TokensFlow.next();
@@ -127,28 +270,38 @@ public class Analyzer {
 			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(")) {
 				TokensFlow.next();
 				
-				if(TokensFlow.hasNext() && true) { //analiseExpression() 
-					TokensFlow.next(); //TIRAR ISSO AQUI
-
+				if(analiseExpression()) {
 					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
+
 						TokensFlow.next();
 						
 						if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("then")) {
 							TokensFlow.next();
-							
+
 							if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
 								TokensFlow.next();
-								
-								if(TokensFlow.hasNext() && analiseCommands()) { //commands
-									
+								if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+
+									if(analiseCommands()) {
+										if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
+											TokensFlow.next();
+											
+											if(TokensFlow.hasNext() && First.check("ElseStatement", TokensFlow.getToken())) {
+												return AnalyzerSecondary.analiseElseStatement();
+											} else {
+												return true;
+											}
+										}
+									}
+								} else {
 									if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
 										TokensFlow.next();
 										
-										if(TokensFlow.hasNext() && First.check("Else", TokensFlow.getToken())) {
-											return AnalyzerSecondary.analiseElse();
-										} 
-										
-										return true;
+										if(TokensFlow.hasNext() && First.check("ElseStatement", TokensFlow.getToken())) {
+											return AnalyzerSecondary.analiseElseStatement();
+										} else {
+											return true;
+										}
 									}
 								}
 							}
@@ -165,36 +318,51 @@ public class Analyzer {
     //              | <Attribution>';'<Commands> | <Write Statement><Commands> | <Return>';'
 	public static boolean analiseCommands() {
 		if(analiseIf()) {	
-			return analiseCommands();
-		} else if(analiseWhile()) {
-			return analiseCommands();
-		} else if(analiseRead()) {
-			return analiseCommands();
+			if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+				return analiseCommands();
+			} else {
+				return true;
+			}
+		} else if(analiseWhileStatement()) {
+			if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+				return analiseCommands();
+			} else {
+				return true;
+			}
+		} else if(analiseReadStatement()) {
+			if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+				return analiseCommands();
+			} else {
+				return true;
+			}
 		} else if(analiseAttribution()) {
 			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
 				TokensFlow.next();
 				
 				if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
-
 					return analiseCommands();
+				} else {
+					return true;
 				}
-				
-				return true;
-				
 			}
-			
-			return false;
-		} else if(analiseWrite()) {
-			return analiseCommands();
-		} else if(analiseReturn()) {
-			return (TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";"));
+		} else if(analiseWriteStatement()) {
+			if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+				return analiseCommands();
+			} else {
+				return true;
+			}
+		} else if(AnalyzerSecondary.analiseReturn()) {
+			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
+				TokensFlow.next();
+				return true;
+			}
 		}
 
 		return false;
 	}
 	
 	//<While Statement> ::= 'while''(' <Expression> ')' '{' <Commands> '}'
-	public static boolean analiseWhile() {
+	public static boolean analiseWhileStatement() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("while")) {
 			TokensFlow.next();
 			
@@ -209,17 +377,17 @@ public class Analyzer {
 						if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
 							TokensFlow.next();
 							
-							System.out.println(TokensFlow.getToken().getTokenClass());
-							
 							if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
 								if(analiseCommands()) {
-									
-									System.out.println(TokensFlow.getToken());
 									if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
 										TokensFlow.next();
 										return true;
 									}
-									
+								}
+							} else {
+								if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
+									TokensFlow.next();
+									return true;
 								}
 							}
 							
@@ -233,25 +401,25 @@ public class Analyzer {
 	}
 	
 	//<Read Statement>   ::= 'read''(' <Reading_1> ')' ';'
-	public static boolean analiseRead() {
+	public static boolean analiseReadStatement() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("read")) {
+			TokensFlow.next();
 			
 			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(")) {
+				TokensFlow.next();
 				
-				if(TokensFlow.hasNext() && AnalyzerSecondary.analiseReading1()) {
+				if(AnalyzerSecondary.analiseReading1()) {
 
 					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
-
+						TokensFlow.next();
+						
 						if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
+							TokensFlow.next();
 							return true;
 						}
-						return false;
 					}
-					return false;
 				}
-				return false;
 			}
-			return false;
 		}
 		
 		return false;
@@ -269,14 +437,16 @@ public class Analyzer {
 						
 						if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
 							return AnalyzerSecondary.analiseAttr();
+						} else {
+							return true;
 						}
 						
 					}
 				} else if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
 					return AnalyzerSecondary.analiseAttr();
-				} 
-				
-				return true;
+				} else {
+					return true;
+				}
 			}
 			
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) { //segunda regra
@@ -289,6 +459,8 @@ public class Analyzer {
 						if(AnalyzerSecondary.analiseAttr()) {
 							return AnalyzerSecondary.analiseVerif();
 						}
+					} else {
+						return AnalyzerSecondary.analiseVerif();
 					}
 					
 				}
@@ -309,39 +481,6 @@ public class Analyzer {
 		return false;
 	}
 	
-	//<Return> ::= 'return' <Return1> 
-	public static boolean analiseReturn() {
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("return")) {
-			TokensFlow.next();
-			
-			return AnalyzerSecondary.return1();
-		}
-		return false;
-	}
-	
-	//<Write Statement> ::= 'write''('<Writing_1>')' ';'
-	public static boolean analiseWriteStatement() {
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("write")) {
-			TokensFlow.next();
-			
-			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(")) {
-				TokensFlow.next();
-				
-				if(TokensFlow.hasNext() && AnalyzerSecondary.analiseWriting1()) {
-					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
-						TokensFlow.next();
-						
-						if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
-							TokensFlow.next();
-							
-							return true;
-						}
-					}
-				}
-			}
-		}
-		
-		return false;
-	}
+
 	
 }

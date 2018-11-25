@@ -27,9 +27,6 @@ public class TokensFlow {
 		return tokensSet.get(index);
 	}
 	
-	public static Token seeActual() {
-		return tokensSet.get(index);
-	}
 	
 	public static boolean hasNext() {
 		return tokensSet.size() > index;
@@ -44,7 +41,7 @@ public class TokensFlow {
 	}
 	
 	public static boolean isEmpty() {
-		return false;
+		return index == tokensSet.size();
 	}
 	
 

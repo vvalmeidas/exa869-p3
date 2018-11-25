@@ -13,7 +13,6 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 		List<Token> tokens = new LinkedList<Token>();
-
 		
 /*		tokens.add(new Token("a", "if", 0));
 		tokens.add(new Token("a", "(", 0));
@@ -35,28 +34,337 @@ public class Main {
 		tokens.add(new Token("a", "}", 0));
 		tokens.add(new Token("a", "}", 0));*/
 		
+/*		*/
+		
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "const", 0));
+		tokens.add(new Token("DELIMITADOR", "{", 0));
 
-		tokens.add(new Token("a", "while", 0));
-		tokens.add(new Token("a", "(", 0));
-		tokens.add(new Token("a", "true", 0));
-		tokens.add(new Token("a", ")", 0));
-		tokens.add(new Token("a", "{", 0));
+		tokens.add(new Token("PALAVRA_RESERVADA", "int", 0));
 		tokens.add(new Token("IDENTIFICADOR", "a", 0));
 		tokens.add(new Token("OPERADOR_RELACIONAL", "=", 0));
-		tokens.add(new Token("OPERADOR_RELACIONAL", "++", 0));
-		tokens.add(new Token("NUMERO", "1", 0));
-		tokens.add(new Token("OPERADOR_ARITMETICO", "*", 0));
-		tokens.add(new Token("NUMERO", "3", 0));
+		tokens.add(new Token("NUMERO", "0", 0));
 		tokens.add(new Token("DELIMITADOR", ";", 0));
-		tokens.add(new Token("a", "}", 0));
+
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+		
+		
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "class", 0));
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		tokens.add(new Token("PALAVRA_RESERVADA", "extends", 0));
+		tokens.add(new Token("IDENTIFICADOR", "b", 0));
+
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "variables", 0));
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+
+		tokens.add(new Token("PALAVRA_RESERVADA", "int", 0));
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		tokens.add(new Token("DELIMITADOR", ";", 0));
+
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "method", 0));
+		tokens.add(new Token("PALAVRA_RESERVADA", "int", 0));
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "if", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("NUMERO", "1", 0));
+		tokens.add(new Token("OPERADOR_RELACIONAL", "==", 0));
+		tokens.add(new Token("NUMERO", "1", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "then", 0));
+
+		
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "else", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "write", 0));
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		tokens.add(new Token("DELIMITADOR", ";", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "if", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("IDENTIFICADOR", "aaaa", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "then", 0));
+
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "read", 0));
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		tokens.add(new Token("DELIMITADOR", ";", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "if", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("IDENTIFICADOR", "aaaa", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "then", 0));
+
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+				
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+
+		tokens.add(new Token("PALAVRA_RESERVADA", "method", 0));
+		tokens.add(new Token("PALAVRA_RESERVADA", "int", 0));
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "if", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("NUMERO", "1", 0));
+		tokens.add(new Token("OPERADOR_RELACIONAL", "==", 0));
+		tokens.add(new Token("NUMERO", "1", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "then", 0));
+
+		
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "else", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "write", 0));
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		tokens.add(new Token("DELIMITADOR", ";", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "if", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("IDENTIFICADOR", "aaaa", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "then", 0));
+
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "read", 0));
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		tokens.add(new Token("DELIMITADOR", ";", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "if", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("IDENTIFICADOR", "aaaa", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "then", 0));
+
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+				
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "class", 0));
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		tokens.add(new Token("PALAVRA_RESERVADA", "extends", 0));
+		tokens.add(new Token("IDENTIFICADOR", "b", 0));
+
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "variables", 0));
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+
+		tokens.add(new Token("PALAVRA_RESERVADA", "int", 0));
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		tokens.add(new Token("DELIMITADOR", ";", 0));
+
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "method", 0));
+		tokens.add(new Token("PALAVRA_RESERVADA", "int", 0));
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "if", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("NUMERO", "1", 0));
+		tokens.add(new Token("OPERADOR_RELACIONAL", "==", 0));
+		tokens.add(new Token("NUMERO", "1", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "then", 0));
+
+		
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "else", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "write", 0));
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		tokens.add(new Token("DELIMITADOR", ";", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "if", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("IDENTIFICADOR", "aaaa", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "then", 0));
+
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "read", 0));
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		tokens.add(new Token("DELIMITADOR", ";", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "if", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("IDENTIFICADOR", "aaaa", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "then", 0));
+
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+				
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+
+		tokens.add(new Token("PALAVRA_RESERVADA", "method", 0));
+		tokens.add(new Token("PALAVRA_RESERVADA", "int", 0));
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "if", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("NUMERO", "1", 0));
+		tokens.add(new Token("OPERADOR_RELACIONAL", "==", 0));
+		tokens.add(new Token("NUMERO", "1", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "then", 0));
+
+		
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "else", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "write", 0));
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		tokens.add(new Token("DELIMITADOR", ";", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "if", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("IDENTIFICADOR", "aaaa", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "then", 0));
+
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "read", 0));
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("IDENTIFICADOR", "a", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		tokens.add(new Token("DELIMITADOR", ";", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "if", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "(", 0));
+		tokens.add(new Token("IDENTIFICADOR", "aaaa", 0));
+		tokens.add(new Token("DELIMITADOR", ")", 0));
+		
+		tokens.add(new Token("PALAVRA_RESERVADA", "then", 0));
+
+		tokens.add(new Token("DELIMITADOR", "{", 0));
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+				
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+		
+		tokens.add(new Token("DELIMITADOR", "}", 0));
+		
 		
 		//TODO: Tem que finalizar classmethods e global
 		
 		TokensFlow.setTokensSet(tokens);
 		
-		System.out.println(Analyzer.analiseWhile());
-		
-		//System.out.println(Analyzer.analiseIf());
+		System.out.println(Analyzer.analiseGlobal());
+		System.out.println(TokensFlow.isEmpty());
 	}
 
 }

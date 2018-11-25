@@ -147,6 +147,39 @@ public class First {
 		add("class");
 	}};
 	
+	public static LinkedList<String> MoreParameters = new LinkedList<String>() {{
+		add(",");
+	}};
+
+	public static LinkedList<String> MoreMethods = new LinkedList<String>() {{
+		add("method");
+	}};
+	
+	public static LinkedList<String> ElseStatement = new LinkedList<String>() {{
+		add("else");
+	}};
+	
+	public static LinkedList<String> NewDeclaration = new LinkedList<String>() {{
+		add("int");
+		add("float");
+		add("bool");
+		add("string");
+		add("void");
+	}};
+	
+	public static LinkedList<String> ParameterDeclaration = new LinkedList<String>() {{
+		add("IDENTIFICADOR");
+		add("int");
+		add("float");
+		add("bool");
+		add("string");
+		add("void");
+	}};
+	
+	
+	
+	
+	
 	public static boolean check(String production, Token token) {
 		if(production == "Else") {
 			return Else.contains(token.getValue()) || Else.contains(token.getTokenClass()); 
@@ -183,7 +216,7 @@ public class First {
 		} else if(production == "MoreWritings") {
 			return MoreWritings.contains(token.getValue()) || MoreWritings.contains(token.getTokenClass()); 
 		} else if(production == "MoreVariables") {	
-			return MoreVariables.contains(token.getValue().toLowerCase()) || MoreVariables.contains(token.getTokenClass()); 
+			return MoreVariables.contains(token.getValue()) || MoreVariables.contains(token.getTokenClass()); 
 		} else if(production == "MoreConstants") {	
 			return MoreConstants.contains(token.getValue()) || MoreConstants.contains(token.getTokenClass()); 
 		} else if(production == "VariableDeclaration") {	
@@ -194,9 +227,21 @@ public class First {
 			return ClassHeritage.contains(token.getValue()) || ClassHeritage.contains(token.getTokenClass()); 
 		} else if(production == "ConstantDeclaration") {	
 			return ConstantDeclaration.contains(token.getValue()) || ConstantDeclaration.contains(token.getTokenClass()); 
-		}else if(production == "MoreClasses") {	
+		} else if(production == "MoreClasses") {	
 			return MoreClasses.contains(token.getValue()) || MoreClasses.contains(token.getTokenClass()); 
+		} else if(production == "MoreParameters") {	
+			return MoreParameters.contains(token.getValue()) || MoreParameters.contains(token.getTokenClass()); 
+		} else if(production == "MoreMethods") {
+			return MoreMethods.contains(token.getValue()) || MoreMethods.contains(token.getTokenClass()); 
+		} else if(production == "ElseStatement") {
+			return ElseStatement.contains(token.getValue()) || ElseStatement.contains(token.getTokenClass()); 
+		} else if(production == "NewDeclaration") {
+			return NewDeclaration.contains(token.getValue()) || NewDeclaration.contains(token.getTokenClass()); 
+		} else if(production == "ParameterDeclaration") {
+			return ParameterDeclaration.contains(token.getValue()) || ParameterDeclaration.contains(token.getTokenClass()); 
 		}
+		
+		
 		
 		return false;
 	}
