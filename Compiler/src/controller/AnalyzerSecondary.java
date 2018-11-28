@@ -12,7 +12,6 @@ public class AnalyzerSecondary {
 	//<More Classes> ::= <Class Declaration><More Classes> | <>
 	public static boolean analiseMoreClasses() {
 		if(Analyzer.analiseClassDeclaration()) {
-			
 			if(TokensFlow.hasNext() && First.check("MoreClasses", TokensFlow.getToken())) {
 				return analiseMoreClasses();
 			} else {
@@ -27,21 +26,18 @@ public class AnalyzerSecondary {
 	public static boolean analiseClassIdentification() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
 			TokensFlow.next();
-			
+
 			if(TokensFlow.hasNext() && First.check("ClassHeritage", TokensFlow.getToken())) {
 				if(analiseClassHeritage()) {
-					
 					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
 						TokensFlow.next();
-						
+
 						if(analiseClassBody()) {
 							if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
 								TokensFlow.next();
 								return true;
 							}
 						}
-						
-						
 					}
 				}
  			} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
@@ -97,7 +93,6 @@ public class AnalyzerSecondary {
 	
 	//<Class Methods> ::= <Method Declaration> | <>
 	public static boolean analiseClassMethods() {
-
 		return Analyzer.analiseMethodDeclaration();
 	}
 	
@@ -258,9 +253,7 @@ public class AnalyzerSecondary {
 		return false;
 	}
 	
-	
-	
-	
+
 	
 	
 	
@@ -488,7 +481,7 @@ public class AnalyzerSecondary {
 	public static boolean analiseRelationalExp() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("OPERADOR_RELACIONAL")) {
 			TokensFlow.next();
-			
+
 			if(analiseAddExp()) {
 				if(TokensFlow.hasNext() && First.check("LogicalExp", TokensFlow.getToken())) {
 					return analiseLogicalExp();
@@ -496,11 +489,11 @@ public class AnalyzerSecondary {
 					return true;
 				}
 			}
-			
 		} else {
 			if(TokensFlow.hasNext() && First.check("LogicalExp", TokensFlow.getToken())) {
 				return analiseLogicalExp();
 			} else {
+				
 				return true;
 			}
 		}
@@ -624,9 +617,9 @@ public class AnalyzerSecondary {
 			return true;
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(")) {
 			TokensFlow.next();
-			
 			if(Analyzer.analiseExpression()) {
 				if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
+					TokensFlow.next();
 					return true;
 				}
 			}

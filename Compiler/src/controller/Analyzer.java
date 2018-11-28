@@ -24,7 +24,6 @@ public class Analyzer {
 				}
 			}
 		} else if(analiseClassDeclaration()) {
-
 			if(TokensFlow.hasNext() && First.check("MoreClasses", TokensFlow.getToken())) {
 				return AnalyzerSecondary.analiseMoreClasses();
 			} else {
@@ -39,7 +38,7 @@ public class Analyzer {
 	public static boolean analiseClassDeclaration() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("class")) {
 			TokensFlow.next();
-			
+
 			if(AnalyzerSecondary.analiseClassIdentification()) {
 				return true;
 			}
@@ -94,25 +93,26 @@ public class Analyzer {
 	public static boolean analiseMethodDeclaration() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("method")) {
 			TokensFlow.next();
-
 			if(AnalyzerSecondary.analiseType()) {
 
-				
 				if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
 					TokensFlow.next();
+
 					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(")) {
 						TokensFlow.next();
 
 						if(TokensFlow.hasNext() && First.check("ParameterDeclaration", TokensFlow.getToken())) {
 
 							if(AnalyzerSecondary.analiseParameterDeclaration()) {
+
 								if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
 									TokensFlow.next();
-									
+
 									if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
 										TokensFlow.next();
-										
-										if(TokensFlow.hasNext() && First.check("VariableDeclaration", TokensFlow.getToken())) { 
+
+										if(TokensFlow.hasNext() && First.check("VariableDeclaration", TokensFlow.getToken())) {
+
 											if(analiseVariableDeclaration()) {
 												if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
 													if(analiseCommands()) {
@@ -139,9 +139,10 @@ public class Analyzer {
 										} else {
 											if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
 												if(analiseCommands()) {
+
 													if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
 														TokensFlow.next();
-														
+
 														if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
 															return AnalyzerSecondary.analiseMoreMethods();
 														} else {
@@ -230,7 +231,7 @@ public class Analyzer {
 	}
 	
 	//<Expression> ::= <Add Exp><Relational Exp>
-	public static boolean analiseExpression() { 	
+	public static boolean analiseExpression() { 
 		if(AnalyzerSecondary.analiseAddExp()) {
 			return AnalyzerSecondary.analiseRelationalExp();
 		}
@@ -474,12 +475,12 @@ public class Analyzer {
 			} else {
 				return AnalyzerSecondary.analiseVerif();
 			}
-			
 		}
-		
 		
 		return false;
 	}
+	
+	
 	
 
 	
