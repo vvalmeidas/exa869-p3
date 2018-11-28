@@ -33,6 +33,10 @@ public class Util {
 		return false;
 	}
 	
+	public static void addError(Token token) {
+		errors.add(token.getValue());
+	}
+	
 	public static void handleTerminal(String terminal, boolean value, boolean type) {
 		if(TokensFlow.hasNext()) {
 			if(type) {

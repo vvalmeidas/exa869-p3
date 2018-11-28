@@ -182,93 +182,54 @@ public class Analyzer {
 	}
 	
 	//<Expression> ::= <Add Exp><Relational Exp>
-	public static boolean analiseExpression() { 
-		if(AnalyzerSecondary.analiseAddExp()) {
-			return AnalyzerSecondary.analiseRelationalExp();
-		}
-		
-		return false;
+	public static void analiseExpression() { 
+		AnalyzerSecondary.analiseAddExp();
+		AnalyzerSecondary.analiseRelationalExp();
 	}
 
 	//<Write Statement> ::= 'write''('<Writing_1>')' ';'
-	public static boolean analiseWriteStatement() {
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("write")) {
-			TokensFlow.next();
-			
-			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(") ) {
-				TokensFlow.next();	
-				
-				if(AnalyzerSecondary.analiseWriting1()) {
-					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
-						TokensFlow.next();	
-						
-						if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
-							TokensFlow.next();
-							return true;
-						}
-					}
-				}
-			}
-		}
-		
-		return false;
+	public static void analiseWriteStatement() {
+		Util.handleTerminal("write", true, false);
+		Util.handleTerminal("(", true, false);
+		AnalyzerSecondary.analiseWriting1();
+		Util.handleTerminal(")", true, false);
+		Util.handleTerminal(";", true, false);
 	}
 	
 	//<If Statement> ::= 'if''('<Expression>')' 'then' '{'<Commands>'}'<Else Statement>
-	public static boolean analiseIf() {
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("if")) {
-			TokensFlow.next();
-			
-			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(")) {
-				TokensFlow.next();
-				
-				if(analiseExpression()) {
-					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
+	public static void analiseIf() {
+		Util.handleTerminal("if", true, false);
+		Util.handleTerminal("(", true, false);
+		analiseExpression();
+		Util.handleTerminal(")", true, false);
+		Util.handleTerminal("then", true, false);
+		Util.handleTerminal("{", true, false);
 
-						TokensFlow.next();
-						
-						if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("then")) {
-							TokensFlow.next();
+		if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+			analiseCommands();
+			Util.handleTerminal("}", true, false);
+			if(TokensFlow.hasNext() && First.check("ElseStatement", TokensFlow.getToken())) {
+				AnalyzerSecondary.analiseElseStatement();
+				return;
+			} else {
+				return;
+			}
 
-							if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
-								TokensFlow.next();
-								if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
-
-									if(analiseCommands()) {
-										if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-											TokensFlow.next();
-											
-											if(TokensFlow.hasNext() && First.check("ElseStatement", TokensFlow.getToken())) {
-												return AnalyzerSecondary.analiseElseStatement();
-											} else {
-												return true;
-											}
-										}
-									}
-								} else {
-									if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-										TokensFlow.next();
-										
-										if(TokensFlow.hasNext() && First.check("ElseStatement", TokensFlow.getToken())) {
-											return AnalyzerSecondary.analiseElseStatement();
-										} else {
-											return true;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
+		} else {
+			Util.handleTerminal("}", true, false);
+			if(TokensFlow.hasNext() && First.check("ElseStatement", TokensFlow.getToken())) {
+				AnalyzerSecondary.analiseElseStatement();
+				return;
+			} else {
+				return;
 			}
 		}
-		
-		return false;
 	}
-
+	
+	//COMO IDENTIFICAR O ERRO AQUI??????
 	//<Commands>::= <If Statement><Commands> | <> | <While Statement><Commands> | <Read Statement><Commands>
     //              | <Attribution>';'<Commands> | <Write Statement><Commands> | <Return>';'
-	public static boolean analiseCommands() {
+	public static void analiseCommands() {
 		if(analiseIf()) {	
 			if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
 				return analiseCommands();
@@ -314,69 +275,33 @@ public class Analyzer {
 	}
 	
 	//<While Statement> ::= 'while''(' <Expression> ')' '{' <Commands> '}'
-	public static boolean analiseWhileStatement() {
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("while")) {
-			TokensFlow.next();
-			
-			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(")) {
-				TokensFlow.next();
-				
-				if(analiseExpression()) {
-					
-					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
-						TokensFlow.next();
-						
-						if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
-							TokensFlow.next();
-							
-							if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
-								if(analiseCommands()) {
-									if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-										TokensFlow.next();
-										return true;
-									}
-								}
-							} else {
-								if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-									TokensFlow.next();
-									return true;
-								}
-							}
-							
-						}
-					}
-				}
-			}
+	public static void analiseWhileStatement() {
+		Util.handleTerminal("while", true, false);
+		Util.handleTerminal("(", true, false);
+		analiseExpression();
+		Util.handleTerminal(")", true, false);
+		Util.handleTerminal("{", true, false);
+		if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+			analiseCommands();
+			Util.handleTerminal("}", true, false);
+			return;
+		} else {
+			Util.handleTerminal("}", true, false);
+			return;
 		}
-		
-		return false;
 	}
 	
 	//<Read Statement>   ::= 'read''(' <Reading_1> ')' ';'
-	public static boolean analiseReadStatement() {
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("read")) {
-			TokensFlow.next();
-			
-			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(")) {
-				TokensFlow.next();
-				
-				if(AnalyzerSecondary.analiseReading1()) {
-
-					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
-						TokensFlow.next();
-						
-						if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
-							TokensFlow.next();
-							return true;
-						}
-					}
-				}
-			}
-		}
-		
-		return false;
+	public static void analiseReadStatement() {
+		Util.handleTerminal("read", true, false);
+		Util.handleTerminal("(", true, false);
+		AnalyzerSecondary.analiseReading1();
+		Util.handleTerminal(")", true, false);
+		Util.handleTerminal(";", true, false);
 	}
 	
+	
+	//COMO IDENTIFICAR O ERRO AQUI??????
 	// <Attribution> ::= <Increment>Identifier<Array Verification><Attr> | Identifier<Array Verification><Attr><Verif>
 	public static boolean analiseAttribution() {
 		if(AnalyzerSecondary.analiseIncrement()) {
@@ -430,9 +355,5 @@ public class Analyzer {
 		
 		return false;
 	}
-	
-	
-	
-
 	
 }
