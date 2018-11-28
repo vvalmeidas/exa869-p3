@@ -48,23 +48,16 @@ public class Analyzer {
 	}
 
 	//<Constant Declaration> ::= 'const' '{' <Constants> '}' | <> 
-	public static boolean analiseConstantDeclaration() {
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("const")) {
-			TokensFlow.next();
-			
-			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
-				TokensFlow.next();
-
-				if(AnalyzerSecondary.analiseConstants()) {
-					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-						TokensFlow.next();
-						return true;
-					}
-				}
-			}
-		}
+	public static boolean analiseConstantDeclaration() {		
+		Util.handleTerminal("const");
 		
-		return false;
+		Util.handleTerminal("{");
+		
+		AnalyzerSecondary.analiseConstants();
+		
+		Util.handleTerminal("}");
+		
+		return true;
 	}
 	
 	
