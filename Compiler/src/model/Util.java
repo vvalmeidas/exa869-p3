@@ -33,15 +33,35 @@ public class Util {
 		return false;
 	}
 	
-	public static void handleTerminal(String terminal) {
+	public static void handleTerminal(String terminal, boolean value, boolean type) {
 		if(TokensFlow.hasNext()) {
-			if(TokensFlow.getToken().getValue().equals(terminal)) {
-				TokensFlow.next();
-				return;
-			} else {
-				errors.add(terminal);
-				return;
-			}		
+			if(type) {
+				if(isType(TokensFlow.getToken())) {
+					TokensFlow.next();
+					return;
+				} else {
+					errors.add(terminal);
+					return;
+				}
+			}
+			else if(value) {
+				if(TokensFlow.getToken().getValue().equals(terminal)) {
+					TokensFlow.next();
+					return;
+				} else {
+					errors.add(terminal);
+					return;
+				}
+			}
+			else {
+				if(TokensFlow.getToken().getTokenClass().equals(terminal)) {
+					TokensFlow.next();
+					return;
+				} else {
+					errors.add(terminal);
+					return;
+				}
+			}
 		}
 	}
 

@@ -10,123 +10,88 @@ import model.Util;
 public class AnalyzerSecondary {
 	
 	//<More Classes> ::= <Class Declaration><More Classes> | <>
-	public static boolean analiseMoreClasses() {
-		if(Analyzer.analiseClassDeclaration()) {
-			if(TokensFlow.hasNext() && First.check("MoreClasses", TokensFlow.getToken())) {
-				return analiseMoreClasses();
-			} else {
-				return true;
-			}
+	public static void analiseMoreClasses() {
+		Analyzer.analiseClassDeclaration();
+		if(TokensFlow.hasNext() && First.check("MoreClasses", TokensFlow.getToken())) {
+			analiseMoreClasses();
+			return;
+		} else {
+			return;
 		}
 		
-		return false;
 	}
 	
 	//<Class Identification> ::= Identifier <Class Heritage> '{' <Class Body> '}'
-	public static boolean analiseClassIdentification() {
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
-			TokensFlow.next();
-
-			if(TokensFlow.hasNext() && First.check("ClassHeritage", TokensFlow.getToken())) {
-				if(analiseClassHeritage()) {
-					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
-						TokensFlow.next();
-
-						if(analiseClassBody()) {
-							if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-								TokensFlow.next();
-								return true;
-							}
-						}
-					}
-				}
- 			} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
-				TokensFlow.next();
-				if(analiseClassBody()) {
-					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-						TokensFlow.next();
-						return true;
-					}
-				}
-			}
-			
-		}
+	public static void analiseClassIdentification() {
 		
-		return false;
+		Util.handleTerminal("IDENTIFICADOR", false, false);
+		
+		if(TokensFlow.hasNext() && First.check("ClassHeritage", TokensFlow.getToken())) {
+			analiseClassHeritage();
+			Util.handleTerminal("{", true, false);
+			analiseClassBody();
+			Util.handleTerminal("}", true, false);
+			return;
+			
+ 		} else {
+ 			Util.handleTerminal("{", true, false);
+			analiseClassBody();
+			Util.handleTerminal("}", true, false);
+			return;
+		}
 	}
-	
+
 	//<Class Heritage> ::= 'extends' Identifier | <>
-	public static boolean analiseClassHeritage() {
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("extends")) {
-			TokensFlow.next();
-			
-			if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
-				TokensFlow.next();
-				return true;
-			}
-		}
-		
-		return false;
+	public static void analiseClassHeritage() {
+		Util.handleTerminal("extends", true, false);
+		Util.handleTerminal("IDENTIFIER", false, false);	
+		return;
 	}
 	
 	//<Class Body> ::= <Class Attributes> <Class Methods>
-	public static boolean analiseClassBody() {
-		if(analiseClassAttributes()) {
-			if(TokensFlow.hasNext() && First.check("ClassMethods", TokensFlow.getToken())) {
-				return analiseClassMethods();
-			} else {
-				return true;
-			}
+	public static void analiseClassBody() {
+		analiseClassAttributes();
+		if(TokensFlow.hasNext() && First.check("ClassMethods", TokensFlow.getToken())) {
+			analiseClassMethods();
+			return;
+		} else {
+			return;
 		}
-		
-		return false;
 	}
 	
 	//<Class Attributes> ::= <Variable Declaration> 
-	public static boolean analiseClassAttributes() {
+	public static void analiseClassAttributes() {
 		if(TokensFlow.hasNext() && First.check("VariableDeclaration", TokensFlow.getToken())) {
-			return Analyzer.analiseVariableDeclaration();
+			Analyzer.analiseVariableDeclaration();
+			return;
 		} else {
-			return true;
+			return;
 		}
 	}
 	
 	//<Class Methods> ::= <Method Declaration> | <>
-	public static boolean analiseClassMethods() {
-		return Analyzer.analiseMethodDeclaration();
+	public static void analiseClassMethods() {
+		Analyzer.analiseMethodDeclaration();
+		return;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	//<Constants> ::= Type <ConstAttribution> <More Constants> 
-	public static boolean analiseConstants() {
-		if(TokensFlow.hasNext() && Util.isType(TokensFlow.getToken())) {
-			TokensFlow.next();
-			if(analiseConstAttribution()) {
-				if(analiseMoreConstants()) {
-					return true;
-				}
-			}
-		}
 		
-		return false;
+	//<Constants> ::= Type <ConstAttribution> <More Constants> 
+	public static void analiseConstants() {
+		Util.handleTerminal("tipo", false, true);
+		analiseConstAttribution();
+		analiseMoreConstants();
+		return;
 	}
 	
 	//<More Constants> ::= ',' <ConstAttribution> <More Constants> | ';' <New Declaration> 
-	public static boolean analiseMoreConstants() {
+	public static void analiseMoreConstants() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(",")) {
 			TokensFlow.next();
 						
 			if(analiseConstAttribution()) {
 
-				return analiseMoreConstants();
+				analiseMoreConstants();
+				return;
 			}
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
 			TokensFlow.next();
@@ -137,28 +102,22 @@ public class AnalyzerSecondary {
 				return true;
 			}
 		}
-		
-		return false;
 	}
 	
 	//<New Declaration> ::= <Constants> | <>
-	public static boolean analiseNewDeclaration() {
-		return analiseConstants();
+	public static void analiseNewDeclaration() {
+		analiseConstants();
+		return;
 	}
 
 	
 	//<ConstAttribution> ::= Identifier '=' <Value>
-	public static boolean analiseConstAttribution() {
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
-			TokensFlow.next();
-			
-			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("=")) {
-				TokensFlow.next();
-				return analiseValue();
-			}
-		}
-		
-		return false;
+	public static void analiseConstAttribution() {
+		Util.handleTerminal("IDENTIFICADOR", false, false);
+		Util.handleTerminal("=", true, false);
+		analiseValue();
+		return;
+
 	}
 	
 	//<Value> ::= Number | 'true' | 'false' | CadeCharacters
@@ -175,16 +134,6 @@ public class AnalyzerSecondary {
 		return false;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	//<Variable> ::= Type <Variable2> | Identifier <Variable2>
 	public static boolean analiseVariable() {
 		if(TokensFlow.hasNext() && Util.isType(TokensFlow.getToken())) {
@@ -200,18 +149,15 @@ public class AnalyzerSecondary {
 	}
 	
 	//<Variable2> ::= <Name> <More Variables>
-	public static boolean analiseVariable2() {
-
-		if(analiseName()) {
-
-			if(TokensFlow.hasNext() && First.check("MoreVariables", TokensFlow.getToken())) {
-				return analiseMoreVariables();
-			} else {
-				return true;
-			}
-		}
+	public static void analiseVariable2() {
+		analiseName();
 		
-		return false;
+		if(TokensFlow.hasNext() && First.check("MoreVariables", TokensFlow.getToken())) {
+			analiseMoreVariables();
+			return;
+		} else {
+			return;
+		}
 	}
 	
 	//<More Variables> ::= <Variable> | <>
@@ -220,22 +166,19 @@ public class AnalyzerSecondary {
 	}
 	
 	//<Name> ::= Identifier<Array Verification><More Names>
-	public static boolean analiseName() {
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
-			TokensFlow.next();
+	public static void analiseName() {
+		Util.handleTerminal("IDENTIFICADOR", false, false);
 			
-			if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
+		if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
 
-				if(analiseArrayVerification()) {
-					return analiseMoreNames();
-				}
+			analiseArrayVerification();
+			analiseMoreNames();
+			return;
 
-			} else {
-				return analiseMoreNames();
-			}
+		} else {
+			analiseMoreNames();
+			return;
 		}
-		
-		return false;
 	}
 	
 	//<More Names> ::= ',' <Name> | ';'
@@ -261,13 +204,15 @@ public class AnalyzerSecondary {
 	
 	
 	//<More Methods> ::= <Method Declaration> | <>      
-	public static boolean analiseMoreMethods() {
-		return Analyzer.analiseMethodDeclaration();
+	public static void analiseMoreMethods() {
+		Analyzer.analiseMethodDeclaration();
+		return;
 	}
 	
 	//<Parameter Declaration> ::= <Parameter Declaration2> | <>
-	public static boolean analiseParameterDeclaration() {
-		return analiseParameterDeclaration2();
+	public static void analiseParameterDeclaration() {
+		analiseParameterDeclaration2();
+		return;
 	}
 	
 	//<Parameter Declaration2> ::= <Type> Identifier <Array Verification> <More Parameters>

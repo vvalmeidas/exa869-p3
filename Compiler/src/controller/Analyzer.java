@@ -11,216 +11,174 @@ import model.Util;
 public class Analyzer {
 	
 	//<Global> ::= <Constant Declaration> <Class Declaration> <More Classes>
-	public static boolean analiseGlobal() {
+	public static void analiseGlobal() {
 		if(TokensFlow.hasNext() && First.check("ConstantDeclaration", TokensFlow.getToken())) {
-			if(analiseConstantDeclaration()) {
-				if(analiseClassDeclaration()) {
+			analiseConstantDeclaration();
+			analiseClassDeclaration();
 
-					if(TokensFlow.hasNext() && First.check("MoreClasses", TokensFlow.getToken())) {
-						return AnalyzerSecondary.analiseMoreClasses();
-					} else {
-						return true;
-					}
-				}
-			}
-		} else if(analiseClassDeclaration()) {
 			if(TokensFlow.hasNext() && First.check("MoreClasses", TokensFlow.getToken())) {
-				return AnalyzerSecondary.analiseMoreClasses();
+				AnalyzerSecondary.analiseMoreClasses();
+				return;
 			} else {
-				return true;
+				return;
+			}
+			
+		} else {
+			analiseClassDeclaration();
+			if(TokensFlow.hasNext() && First.check("MoreClasses", TokensFlow.getToken())) {
+				AnalyzerSecondary.analiseMoreClasses();
+				return;
+			} else {
+				return;
 			}
 		}
 		
-		return false;
 	}
 	
 	//<Class Declaration> ::= 'class' <Class Identification>
-	public static boolean analiseClassDeclaration() {
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("class")) {
-			TokensFlow.next();
-
-			if(AnalyzerSecondary.analiseClassIdentification()) {
-				return true;
-			}
-		}
-		
-		return false;
+	public static void analiseClassDeclaration() {
+		Util.handleTerminal("class", true, false);
+		AnalyzerSecondary.analiseClassIdentification();
+		return;
 	}
 
 	//<Constant Declaration> ::= 'const' '{' <Constants> '}' | <> 
-	public static boolean analiseConstantDeclaration() {		
-		Util.handleTerminal("const");
+	public static void analiseConstantDeclaration() {		
+		Util.handleTerminal("const", true, false);
 		
-		Util.handleTerminal("{");
+		Util.handleTerminal("{", true, false);
 		
 		AnalyzerSecondary.analiseConstants();
 		
-		Util.handleTerminal("}");
+		Util.handleTerminal("}", true, false);
 		
-		return true;
 	}
 	
 	
 	//<Variable Declaration> ::= 'variables' '{' <Variable> '}' | <> 
-	public static boolean analiseVariableDeclaration() {
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("variables")) {
-			TokensFlow.next();
-
-			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
-				TokensFlow.next();
-
-				if(AnalyzerSecondary.analiseVariable()) {
-
-					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-						TokensFlow.next();
-						return true;
-					}
-				}
-			}
-		}
+	public static void analiseVariableDeclaration() {
+		Util.handleTerminal("variables", true, false);
 		
-		return false;
+		Util.handleTerminal("{", true, false);
+
+		AnalyzerSecondary.analiseVariable();
+
+		Util.handleTerminal("}", true, false);
+		
 	}
 	
 	//<Method Declaration> ::= 'method' <Type> Identifier '(' <Parameter Declaration> ')' '{' <Variable Declaration> <Commands> '}' <More Methods>
-	public static boolean analiseMethodDeclaration() {
-		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("method")) {
-			TokensFlow.next();
-			if(AnalyzerSecondary.analiseType()) {
+	public static void analiseMethodDeclaration() {
+		Util.handleTerminal("method", true, false);
+		
+		AnalyzerSecondary.analiseType();
+		
+		Util.handleTerminal("IDENTIFICADOR", false, false);
+		
+		Util.handleTerminal("(", true, false);
+		
+		
+		if(TokensFlow.hasNext() && First.check("ParameterDeclaration", TokensFlow.getToken())) {
 
-				if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
-					TokensFlow.next();
+			AnalyzerSecondary.analiseParameterDeclaration();
+			
+			Util.handleTerminal(")", true, false);
+			
+			Util.handleTerminal("{", true, false);
 
-					if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(")) {
-						TokensFlow.next();
+			if(TokensFlow.hasNext() && First.check("VariableDeclaration", TokensFlow.getToken())) {
 
-						if(TokensFlow.hasNext() && First.check("ParameterDeclaration", TokensFlow.getToken())) {
-
-							if(AnalyzerSecondary.analiseParameterDeclaration()) {
-
-								if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
-									TokensFlow.next();
-
-									if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
-										TokensFlow.next();
-
-										if(TokensFlow.hasNext() && First.check("VariableDeclaration", TokensFlow.getToken())) {
-
-											if(analiseVariableDeclaration()) {
-												if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
-													if(analiseCommands()) {
-														if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-															TokensFlow.next();
-															
-															if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
-																return AnalyzerSecondary.analiseMoreMethods();
-															} else {
-																return true;
-															}
-														}
-													}
-												} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-													TokensFlow.next();
-													
-													if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
-														return AnalyzerSecondary.analiseMoreMethods();
-													} else {
-														return true;
-													}
-												}
-											}
-										} else {
-											if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
-												if(analiseCommands()) {
-
-													if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-														TokensFlow.next();
-
-														if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
-															return AnalyzerSecondary.analiseMoreMethods();
-														} else {
-															return true;
-														}
-													}
-												}
-											} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-												TokensFlow.next();
-												
-												if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
-													return AnalyzerSecondary.analiseMoreMethods();
-												} else {
-													return true;
-												}
-											}
-										}
-										
-									}
-								}
-							}
-								
+				analiseVariableDeclaration();
+				
+				if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+					analiseCommands();
+					Util.handleTerminal("}", true, false);										
+					if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+						AnalyzerSecondary.analiseMoreMethods();
+						return;
+					} else {
+						return;
+					}
+				
+					} else {
+						Util.handleTerminal("}", true, false);
+							
+						if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+							AnalyzerSecondary.analiseMoreMethods();
+							return;
 						} else {
-							if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
-								TokensFlow.next();
-								if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("{")) {
-									TokensFlow.next();
-
-									if(TokensFlow.hasNext() && First.check("VariableDeclaration", TokensFlow.getToken())) { 
-										if(analiseVariableDeclaration()) {
-											if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
-												if(analiseCommands()) {
-													if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-														TokensFlow.next();
-														
-														if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
-															return AnalyzerSecondary.analiseMoreMethods();
-														} else {
-															return true;
-														}
-													}
-												}
-											} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-												TokensFlow.next();
-												
-												if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
-													return AnalyzerSecondary.analiseMoreMethods();
-												} else {
-													return true;
-												}
-											}
-										}
-									} else {
-										if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
-											if(analiseCommands()) {
-												if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-													TokensFlow.next();
-
-													if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
-														return AnalyzerSecondary.analiseMoreMethods();
-													} else {
-														return true;
-													}
-												}
-											}
-										} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("}")) {
-											TokensFlow.next();
-											
-											if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
-												return AnalyzerSecondary.analiseMoreMethods();
-											} else {
-												return true;
-											}
-										}
-									}
-								}
-							}
+							return;
 						}
 					}
+			}
+		
+			else if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+				analiseCommands();
+				Util.handleTerminal("}", true, false);
+				if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+					AnalyzerSecondary.analiseMoreMethods();
+					return;
+				} else {
+					return;
+				}
+			} else {
+				Util.handleTerminal("}", true, false);
+				
+				if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+					AnalyzerSecondary.analiseMoreMethods();
+					return;
+				} else {
+					return;
 				}
 			}
-			
+		} else {
+			Util.handleTerminal(")", true, false);
+			Util.handleTerminal("{", true, false);
+
+			if(TokensFlow.hasNext() && First.check("VariableDeclaration", TokensFlow.getToken())) { 
+				analiseVariableDeclaration();
+				if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+					analiseCommands();
+					Util.handleTerminal("}", true, false);
+								
+					if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+						AnalyzerSecondary.analiseMoreMethods();
+						return;
+					} else {
+						return;
+					}
+					
+				} else {
+					Util.handleTerminal("}", true, false);
+					
+					if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+						AnalyzerSecondary.analiseMoreMethods();
+						return;
+					} else {
+						return;
+					}
+				}
+				
+			} else if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+				analiseCommands();
+				Util.handleTerminal("}", true, false);
+
+				if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+					AnalyzerSecondary.analiseMoreMethods();
+					return;
+				} else {
+					return;
+				}
+			} else {
+				Util.handleTerminal("}", true, false);
+				if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+					AnalyzerSecondary.analiseMoreMethods();
+					return;
+				} else {
+					return;
+				}
+			}
 		}
-		
-		return false;
 	}
 	
 	//<Expression> ::= <Add Exp><Relational Exp>
