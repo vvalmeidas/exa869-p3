@@ -33,8 +33,8 @@ public class Util {
 		return false;
 	}
 	
-	public static void addError(Token token) {
-		errors.add(token.getValue());
+	public static void addError(String expected) {
+		errors.add("Erro na linha: " + TokensFlow.getToken().getRow() + ". Esperado: '" + expected + "' - Lido: '" + TokensFlow.getToken().getValue()  + "'");
 	}
 	
 	public static void handleTerminal(String terminal, boolean value, boolean type) {
@@ -44,25 +44,23 @@ public class Util {
 					TokensFlow.next();
 					return;
 				} else {
-					errors.add(terminal);
+					addError("TIPO");
 					return;
 				}
-			}
-			else if(value) {
+			} else if(value) {
 				if(TokensFlow.getToken().getValue().equals(terminal)) {
 					TokensFlow.next();
 					return;
 				} else {
-					errors.add(terminal);
+					addError(terminal);
 					return;
 				}
-			}
-			else {
+			} else {
 				if(TokensFlow.getToken().getTokenClass().equals(terminal)) {
 					TokensFlow.next();
 					return;
 				} else {
-					errors.add(terminal);
+					addError(terminal);
 					return;
 				}
 			}

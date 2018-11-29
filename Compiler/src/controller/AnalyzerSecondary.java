@@ -25,7 +25,7 @@ public class AnalyzerSecondary {
 	public static void analiseClassIdentification() {
 		
 		Util.handleTerminal("IDENTIFICADOR", false, false);
-		
+
 		if(TokensFlow.hasNext() && First.check("ClassHeritage", TokensFlow.getToken())) {
 			analiseClassHeritage();
 			Util.handleTerminal("{", true, false);
@@ -44,7 +44,7 @@ public class AnalyzerSecondary {
 	//<Class Heritage> ::= 'extends' Identifier | <>
 	public static void analiseClassHeritage() {
 		Util.handleTerminal("extends", true, false);
-		Util.handleTerminal("IDENTIFIER", false, false);	
+		Util.handleTerminal("IDENTIFICADOR", false, false);	
 		return;
 	}
 	
@@ -77,7 +77,7 @@ public class AnalyzerSecondary {
 		
 	//<Constants> ::= Type <ConstAttribution> <More Constants> 
 	public static void analiseConstants() {
-		Util.handleTerminal("tipo", false, true);
+		Util.handleTerminal(null, false, true);
 		analiseConstAttribution();
 		analiseMoreConstants();
 		return;
@@ -100,7 +100,7 @@ public class AnalyzerSecondary {
 				return;
 			}
 		}  else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.MoreConstants.toString());
 		}
 	}
 	
@@ -131,7 +131,7 @@ public class AnalyzerSecondary {
 			TokensFlow.next();
 			return;
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.Value.toString());
 		}
 	}
 	
@@ -146,7 +146,7 @@ public class AnalyzerSecondary {
 			analiseVariable2();
 			return;
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.VariableDeclaration.toString());
 		}
 	}
 	
@@ -193,7 +193,7 @@ public class AnalyzerSecondary {
 			TokensFlow.next();
 			return;
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.MoreNames.toString());
 		}
 	
 	}
@@ -245,7 +245,7 @@ public class AnalyzerSecondary {
 			TokensFlow.next();
 			return;
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.Type.toString());
 		}
 	}
 	
@@ -305,7 +305,7 @@ public class AnalyzerSecondary {
 			analiseValue();
 			return;
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.Return1.toString());
 		}
 	}
 	
@@ -334,7 +334,7 @@ public class AnalyzerSecondary {
 			analiseComplement();
 			return;
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.Verif.toString());
 		}
 	}
 	
@@ -345,7 +345,7 @@ public class AnalyzerSecondary {
 				TokensFlow.next();
 				return;
 			} else {
-				Util.addError(TokensFlow.getToken());
+				Util.addError(First.Increment.toString());
 			}
 		}
 	}
@@ -360,7 +360,7 @@ public class AnalyzerSecondary {
 			analiseIncrement();
 			return;
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.NormalAttribution2.toString());
 		}
 	}
 	
@@ -370,10 +370,11 @@ public class AnalyzerSecondary {
 			TokensFlow.next();
 			return;
 		} else if(TokensFlow.hasNext() && First.check("Expression", TokensFlow.getToken())){
+			//KKKKKKKKKKKK
 			Analyzer.analiseExpression();
 			return;
-		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+		} else {
+			Util.addError(First.NormalAttribution3.toString());
 		}
 	}
 	
@@ -382,6 +383,7 @@ public class AnalyzerSecondary {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("OPERADOR_RELACIONAL")) {
 			TokensFlow.next();
 			analiseAddExp(); 
+			
 			if(TokensFlow.hasNext() && First.check("LogicalExp", TokensFlow.getToken())) {
 				analiseLogicalExp();
 				return;
@@ -389,11 +391,13 @@ public class AnalyzerSecondary {
 				return;
 			}
 			
-		} else if(TokensFlow.hasNext() && First.check("LogicalExp", TokensFlow.getToken())) {
+		} else {
+			if(TokensFlow.hasNext() && First.check("LogicalExp", TokensFlow.getToken())) {
 				analiseLogicalExp();
 				return;
-		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			} else {
+				return;
+			}
 		}
 	}
 	
@@ -408,13 +412,13 @@ public class AnalyzerSecondary {
 			Analyzer.analiseExpression();
 			return;
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.LogicalExp.toString());
 		}
 	}
 	
 	
 	//<Add Exp> ::= <Mult Exp> <D>
-	public static void analiseAddExp() { 
+	public static void analiseAddExp() {
 		analiseMultExp();
 		if(TokensFlow.hasNext() && First.check("D", TokensFlow.getToken())) {
 			analiseD();
@@ -432,19 +436,19 @@ public class AnalyzerSecondary {
 			analiseAddExp();
 			return;
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.D.toString());
 		}
 	}
 	
 	// <Mult Exp> ::= <Neg Exp> <E>
-	public static void analiseMultExp() { 
+	public static void analiseMultExp() {
 		analiseNegExp();
-			if(TokensFlow.hasNext() && First.check("E", TokensFlow.getToken())) {
-				analiseE();
-				return;
-			} else {
-				return;
-			}
+		if(TokensFlow.hasNext() && First.check("E", TokensFlow.getToken())) {
+			analiseE();
+			return;
+		} else {
+			return;
+		}
 	}
 	
 	//<E> ::= '*' <Mult Exp> | '/' <Mult Exp> | <>
@@ -458,7 +462,7 @@ public class AnalyzerSecondary {
 			analiseMultExp();
 			return;
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.E.toString());
 		}
 	}
 	
@@ -470,7 +474,6 @@ public class AnalyzerSecondary {
 			return;
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("!")) {
 			TokensFlow.next();
-			
 			analiseExpValue();
 			return;
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("++")) {
@@ -489,9 +492,10 @@ public class AnalyzerSecondary {
 				} else {
 					return;
 				}
-		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+		} else {
+			Util.addError(First.NegExp.toString());
 		}
+	
 
 	}
 	
@@ -505,7 +509,7 @@ public class AnalyzerSecondary {
 			TokensFlow.next();
 			return;
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.G.toString());
 		}
 	}
 	
@@ -562,7 +566,7 @@ public class AnalyzerSecondary {
 			return;
 			
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.ExpValue.toString());
 		}
 	}	
 	
@@ -606,7 +610,7 @@ public class AnalyzerSecondary {
 				return;
 			}
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.Param.toString());
 		}
 		
 	}
@@ -639,7 +643,7 @@ public class AnalyzerSecondary {
 				return;
 			}
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.ObrigatoryParam.toString());
 		}
 	}
 	
@@ -734,7 +738,7 @@ public class AnalyzerSecondary {
 			}
 			
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.Writing1.toString());
 		}
 	}
 	

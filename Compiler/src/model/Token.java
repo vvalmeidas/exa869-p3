@@ -50,4 +50,8 @@ public class Token {
 		return name;
 	}
 	
+	public int getRow() {
+		return row;
+	}
+	
 }

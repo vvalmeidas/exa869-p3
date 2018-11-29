@@ -230,7 +230,7 @@ public class First {
 		add("(");
 		add("false");
 		add("IDENTIFICADOR");
-		add("NUMBER");
+		add("NUMERO");
 		add("true");
 	}};
 	
@@ -264,7 +264,89 @@ public class First {
 		add("return");
 	}};
 	
+	public static LinkedList<String> Variable = new LinkedList<String>() {{
+		add("IDENTIFICADOR");
+		add("int");
+		add("float");
+		add("bool");
+		add("string");
+		add("void");
+	}};
 	
+	public static LinkedList<String> MoreNames = new LinkedList<String>() {{
+		add(",");
+		add(";");
+	}};
+	
+	public static LinkedList<String> Type = new LinkedList<String>() {{
+		add("IDENTIFICADOR");
+		add("int");
+		add("float");
+		add("bool");
+		add("string");
+		add("void");
+	}};
+	
+	
+	public static LinkedList<String> Return1 = new LinkedList<String>() {{
+		add("IDENTIFICADOR");
+		add("CADEIA_DE_CARACTERES");
+		add("false");
+		add("true");
+		add("IDENTIFICADOR");
+		add("NUMERO");
+	}};
+	
+	
+	public static LinkedList<String> Verif = new LinkedList<String>() {{
+		add("--");
+		add("(");
+		add("++");
+		add("=");
+	}};
+
+	public static LinkedList<String> NormalAttribution3 = new LinkedList<String>() {{
+		add("-");
+		add("--");
+		add("!");
+		add("(");
+		add("++");
+		add("CADEIA_DE_CARACTERES");
+		add("false");
+		add("true");
+		add("IDENTIFICADOR");
+		add("NUMERO");
+	}};
+	
+	public static LinkedList<String> NegExp = new LinkedList<String>() {{
+		add("-");
+		add("--");
+		add("!");
+		add("(");
+		add("++");
+		add("false");
+		add("true");
+		add("IDENTIFICADOR");
+		add("NUMERO");
+	}};
+	
+	public static LinkedList<String> ObrigatoryParam = new LinkedList<String>() {{
+		add("-");
+		add("--");
+		add("!");
+		add("(");
+		add("++");
+		add("CADEIA_DE_CARACTERES");
+		add("false");
+		add("true");
+		add("IDENTIFICADOR");
+		add("NUMERO");
+	}};
+	
+	public static LinkedList<String> Writing1 = new LinkedList<String>() {{
+		add("CADEIA_DE_CARACTERES");
+		add("IDENTIFICADOR");
+	}};
 	
 	public static boolean check(String production, Token token) {
 		if(production == "Else") {
@@ -355,10 +437,16 @@ public class First {
 			return Write.contains(token.getValue()) || Write.contains(token.getTokenClass()); 
 		} else if(production == "Return") {
 			return Return.contains(token.getValue()) || Return.contains(token.getTokenClass()); 
+		} else if(production == "Variable") {
+			return Variable.contains(token.getValue()) || Variable.contains(token.getTokenClass()); 
+		} else if(production == "MoreNames") {
+			return MoreNames.contains(token.getValue()) || MoreNames.contains(token.getTokenClass()); 
+		} else if(production == "Type") {
+			return Type.contains(token.getValue()) || Type.contains(token.getTokenClass()); 
+		} else if(production == "Return1") {
+			return Return1.contains(token.getValue()) || Return1.contains(token.getTokenClass()); 
 		}
-		
-		
-		
+		 
 		return false;
 	}
 	

@@ -8,12 +8,11 @@ import controller.Analyzer;
 import controller.FileController;
 import model.Token;
 import model.TokensFlow;
+import model.Util;
 
 public class Main {
 
-	public static void main(String[] args) throws IOException {
-		List<Token> tokensList = new LinkedList<Token>();
-		
+	public static void main(String[] args) throws IOException {		
 		Map<String, String> sourceFiles = FileController.readFiles();
 		Iterator<String> iSource = sourceFiles.keySet().iterator();
 		
@@ -24,15 +23,19 @@ public class Main {
 			Lexer lexer = new Lexer();
 			lexer.initialize(sourceCode);
 			
-			tokensList.addAll(lexer.getTokens());
+			TokensFlow.setTokensSet(lexer.getTokens());
+			Analyzer.analiseGlobal();
+			FileController.saveSyntacticResults(fileName);
 		}
+		
+		System.out.println(Util.errors.size());
 		
 		//System.out.println(tokensList);
 		
-		TokensFlow.setTokensSet(tokensList);
+		//TokensFlow.setTokensSet(tokensList);
 		
 		//System.out.println(Analyzer.analiseExpression());
-		System.out.println(TokensFlow.isEmpty());
+		//System.out.println(TokensFlow.isEmpty());
 		
 	}
 

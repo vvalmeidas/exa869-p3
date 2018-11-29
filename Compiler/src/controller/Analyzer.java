@@ -50,8 +50,7 @@ public class Analyzer {
 		
 		AnalyzerSecondary.analiseConstants();
 		
-		Util.handleTerminal("}", true, false);
-		
+		Util.handleTerminal("}", true, false);		
 	}
 	
 	
@@ -77,11 +76,10 @@ public class Analyzer {
 		
 		Util.handleTerminal("(", true, false);
 		
-		
 		if(TokensFlow.hasNext() && First.check("ParameterDeclaration", TokensFlow.getToken())) {
 
 			AnalyzerSecondary.analiseParameterDeclaration();
-			
+
 			Util.handleTerminal(")", true, false);
 			
 			Util.handleTerminal("{", true, false);
@@ -110,9 +108,7 @@ public class Analyzer {
 							return;
 						}
 					}
-			}
-		
-			else if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+			} else if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
 				analiseCommands();
 				Util.handleTerminal("}", true, false);
 				if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
@@ -255,15 +251,14 @@ public class Analyzer {
 			}
 		} else if(TokensFlow.hasNext() && First.check("Attribution", TokensFlow.getToken())) {
 			analiseAttribution();
-			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
-				TokensFlow.next();
-				
-				if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
-					analiseCommands();
-					return;
-				} else {
-					return;
-				}
+			
+			Util.handleTerminal(";", true, false);
+			
+			if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+				analiseCommands();
+				return;
+			} else {
+				return;
 			}
 		} else if(TokensFlow.hasNext() && First.check("Write", TokensFlow.getToken())) {
 			analiseWriteStatement();
@@ -280,7 +275,8 @@ public class Analyzer {
 				return;
 			}
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.Commands.toString());
+			
 		}
 
 	}
@@ -333,7 +329,7 @@ public class Analyzer {
 			}
 			
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) { 
-			TokensFlow.next();			
+			TokensFlow.next();	
 			if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
 				AnalyzerSecondary.analiseArrayVerification();
 				if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
@@ -349,13 +345,12 @@ public class Analyzer {
 				AnalyzerSecondary.analiseAttr();
 				AnalyzerSecondary.analiseVerif();
 				return;
-				
 			} else {
 				AnalyzerSecondary.analiseVerif();
 				return;
 			}
 		} else if(TokensFlow.hasNext()) {
-			Util.addError(TokensFlow.getToken());
+			Util.addError(First.Attribution.toString());
 		}
 				
 	}

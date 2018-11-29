@@ -12,8 +12,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import model.Util;
 
 public class FileController {
 	
@@ -26,7 +30,7 @@ public class FileController {
 	
 	/**
 	 * Realiza a leitura de todos os arquivos .txt presentes na pasta entrada.
-	 * @return Map no qual a chave é o nome do arquivo lido e o conteúdo é uma string do arquivo lido.
+	 * @return Map no qual a chave ï¿½ o nome do arquivo lido e o conteï¿½do ï¿½ uma string do arquivo lido.
 	 * @throws IOException 
 	 */
 	public static Map<String, String> readFiles() throws IOException {		
@@ -36,7 +40,7 @@ public class FileController {
 		File dir = new File(TEST_PATH);
 		
 		for(File file : dir.listFiles()) {
-			if(file.getName().endsWith(".txt")) {
+			if(file.getName().endsWith(".txt") && !file.getName().contains("resultado-")) {
 				BufferedReader bufferedReader  = new BufferedReader(
 				    new InputStreamReader(new FileInputStream(file)));
 
@@ -56,18 +60,19 @@ public class FileController {
 		
 	}
 	
-	/**
-	 * Salva o resultado da análise léxica na pasta saida.
-	 * @param name nome do arquivo com o resultado da análise léxica
-	 * @param results resultados da análise léxica
-	 * @throws IOException 
-	 */
-	public static void saveFile(String name, String results) {
-		try {
-			Files.write(Paths.get(TEST_PATH + "/saida/resultado-" + name), results.getBytes(StandardCharsets.UTF_8));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	
+	public static void saveSyntacticResults(String fileName) throws IOException {
+	    FileWriter writer = new FileWriter(TEST_PATH + "/resultado-" + fileName);
+	    
+	    if(Util.errors.size() == 0) {
+	    	writer.write("SUCESSO!");
+	    } else {
+			for(String result: Util.errors) {
+			  writer.write(result + "\n");
+			}
+	    }
+
+		writer.close();
 	}
 	
 
