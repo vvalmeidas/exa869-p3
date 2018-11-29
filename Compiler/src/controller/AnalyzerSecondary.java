@@ -99,7 +99,7 @@ public class AnalyzerSecondary {
 			} else {
 				return;
 			}
-		}  else if(TokensFlow.hasNext()) {
+		}  else {
 			Util.addError(First.MoreConstants.toString());
 		}
 	}
@@ -122,15 +122,15 @@ public class AnalyzerSecondary {
 	
 	//<Value> ::= Number | 'true' | 'false' | CadeCharacters
 	public static void analiseValue() {
-		if(TokensFlow.getToken().getTokenClass().equals("NUMERO") 
+		if(TokensFlow.hasNext() && (TokensFlow.getToken().getTokenClass().equals("NUMERO") 
 				|| TokensFlow.getToken().getTokenClass().equals("CADEIA_DE_CARACTERES") 
 				|| TokensFlow.getToken().getValue().equals("true")
 				|| TokensFlow.getToken().getValue().equals("false")
-				) {
+				)) {
 			
 			TokensFlow.next();
 			return;
-		} else if(TokensFlow.hasNext()) {
+		} else {
 			Util.addError(First.Value.toString());
 		}
 	}
@@ -192,7 +192,7 @@ public class AnalyzerSecondary {
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
 			TokensFlow.next();
 			return;
-		} else if(TokensFlow.hasNext()) {
+		} else {
 			Util.addError(First.MoreNames.toString());
 		}
 	
@@ -241,10 +241,10 @@ public class AnalyzerSecondary {
 		if(TokensFlow.hasNext() && Util.isType(TokensFlow.getToken())) {
 			TokensFlow.next();
 			return;
-		} else if(TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
+		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
 			TokensFlow.next();
 			return;
-		} else if(TokensFlow.hasNext()) {
+		} else {
 			Util.addError(First.Type.toString());
 		}
 	}
@@ -287,7 +287,6 @@ public class AnalyzerSecondary {
 	public static void analiseReturn() {
 		Util.handleTerminal("return", true, false);
 		analiseReturn1();
-		
 		return;
 	}
 	
@@ -301,11 +300,13 @@ public class AnalyzerSecondary {
 			} else {
 				return;
 			}
-		} else if(TokensFlow.hasNext() && First.check("Value", TokensFlow.getToken())) { 
-			analiseValue();
-			return;
-		} else if(TokensFlow.hasNext()) {
-			Util.addError(First.Return1.toString());
+		} else {
+			if(TokensFlow.hasNext() && First.check("Value", TokensFlow.getToken())) { 
+				analiseValue();
+				return;
+			} else {
+				Util.addError(First.Return1.toString());
+			}
 		}
 	}
 	
@@ -322,7 +323,6 @@ public class AnalyzerSecondary {
 			Util.handleTerminal("}", true, false);
 			return;
 		}
-			 
 	}
 	
 	//<Verif> ::= <Normal Attribution2> | <Complement>
@@ -333,7 +333,7 @@ public class AnalyzerSecondary {
 		} else if(TokensFlow.hasNext() && First.check("Complement", TokensFlow.getToken())) {
 			analiseComplement();
 			return;
-		} else if(TokensFlow.hasNext()) {
+		} else {
 			Util.addError(First.Verif.toString());
 		}
 	}
@@ -359,7 +359,7 @@ public class AnalyzerSecondary {
 		} else if(TokensFlow.hasNext() && First.check("Increment", TokensFlow.getToken())) {
 			analiseIncrement();
 			return;
-		} else if(TokensFlow.hasNext()) {
+		} else {
 			Util.addError(First.NormalAttribution2.toString());
 		}
 	}
@@ -370,7 +370,6 @@ public class AnalyzerSecondary {
 			TokensFlow.next();
 			return;
 		} else if(TokensFlow.hasNext() && First.check("Expression", TokensFlow.getToken())){
-			//KKKKKKKKKKKK
 			Analyzer.analiseExpression();
 			return;
 		} else {
@@ -411,11 +410,10 @@ public class AnalyzerSecondary {
 			TokensFlow.next();
 			Analyzer.analiseExpression();
 			return;
-		} else if(TokensFlow.hasNext()) {
+		} else {
 			Util.addError(First.LogicalExp.toString());
 		}
 	}
-	
 	
 	//<Add Exp> ::= <Mult Exp> <D>
 	public static void analiseAddExp() {
@@ -435,7 +433,7 @@ public class AnalyzerSecondary {
 			TokensFlow.next();
 			analiseAddExp();
 			return;
-		} else if(TokensFlow.hasNext()) {
+		} else {
 			Util.addError(First.D.toString());
 		}
 	}
@@ -461,7 +459,7 @@ public class AnalyzerSecondary {
 			TokensFlow.next();
 			analiseMultExp();
 			return;
-		} else if(TokensFlow.hasNext()) {
+		} else {
 			Util.addError(First.E.toString());
 		}
 	}
@@ -495,11 +493,8 @@ public class AnalyzerSecondary {
 		} else {
 			Util.addError(First.NegExp.toString());
 		}
-	
-
 	}
 	
-
 	//<G> ::= '--' | '++' | <>
 	public static void analiseG() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("--")) {
@@ -508,7 +503,7 @@ public class AnalyzerSecondary {
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("++")) {
 			TokensFlow.next();
 			return;
-		} else if(TokensFlow.hasNext()) {
+		} else {
 			Util.addError(First.G.toString());
 		}
 	}
@@ -518,7 +513,6 @@ public class AnalyzerSecondary {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("NUMERO")) {
 			TokensFlow.next();
 			return;
-			
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(")) {
 			TokensFlow.next();
 			if(TokensFlow.hasNext() && First.check("Expression", TokensFlow.getToken())){
@@ -530,7 +524,8 @@ public class AnalyzerSecondary {
 		} else if(TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) { 
 			TokensFlow.next();
 			if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
-				analiseArrayVerification();				
+				analiseArrayVerification();		
+				
 				if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
 					analiseAttr();
 					if(TokensFlow.hasNext() && First.check("Param2", TokensFlow.getToken())) {
@@ -543,8 +538,9 @@ public class AnalyzerSecondary {
 				} else if(TokensFlow.hasNext() && First.check("Param2", TokensFlow.getToken())) {
 					analiseParam2();
 					return;
-				}
-				
+				} else {
+					return;
+				} 
 			} else if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
 				analiseAttr();
 				if(TokensFlow.hasNext() && First.check("Param2", TokensFlow.getToken())) {
@@ -565,7 +561,7 @@ public class AnalyzerSecondary {
 			TokensFlow.next();
 			return;
 			
-		} else if(TokensFlow.hasNext()) {
+		} else {
 			Util.addError(First.ExpValue.toString());
 		}
 	}	
@@ -600,8 +596,7 @@ public class AnalyzerSecondary {
 			} else {
 				return;
 			}			
-		}
-		else if(TokensFlow.hasNext() && First.check("Expression", TokensFlow.getToken())) {
+		} else if(TokensFlow.hasNext() && First.check("Expression", TokensFlow.getToken())) {
 			Analyzer.analiseExpression();			
 			if(TokensFlow.hasNext() && First.check("MoreParam", TokensFlow.getToken())) {
 				analiseMoreParam();
@@ -609,10 +604,9 @@ public class AnalyzerSecondary {
 			} else {
 				return;
 			}
-		} else if(TokensFlow.hasNext()) {
+		} else {
 			Util.addError(First.Param.toString());
 		}
-		
 	}
 	
 	
@@ -633,8 +627,7 @@ public class AnalyzerSecondary {
 			} else {
 				return;
 			}
-		}
-		else if(TokensFlow.hasNext() && First.check("Expression", TokensFlow.getToken())) {
+		} else if(TokensFlow.hasNext() && First.check("Expression", TokensFlow.getToken())) {
 			Analyzer.analiseExpression();		
 			if(TokensFlow.hasNext() && First.check("MoreParam", TokensFlow.getToken())) {
 				analiseMoreParam();
@@ -642,7 +635,7 @@ public class AnalyzerSecondary {
 			} else {
 				return;
 			}
-		} else if(TokensFlow.hasNext()) {
+		} else {
 			Util.addError(First.ObrigatoryParam.toString());
 		}
 	}
@@ -653,6 +646,7 @@ public class AnalyzerSecondary {
 			
 		if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
 			analiseArrayVerification();	
+			
 			if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
 				analiseAttr();
 				if(TokensFlow.hasNext() && First.check("MoreReadings", TokensFlow.getToken())) {
@@ -664,6 +658,8 @@ public class AnalyzerSecondary {
 						
 			} else if(TokensFlow.hasNext() && First.check("MoreReadings", TokensFlow.getToken())) {
 				analiseMoreReadings();
+				return;
+			} else {
 				return;
 			}
 				
@@ -737,7 +733,7 @@ public class AnalyzerSecondary {
 				return;
 			}
 			
-		} else if(TokensFlow.hasNext()) {
+		} else {
 			Util.addError(First.Writing1.toString());
 		}
 	}
@@ -765,6 +761,8 @@ public class AnalyzerSecondary {
 			
 		} else if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
 			analiseAttr();
+			return;
+		} else {
 			return;
 		}
 	}

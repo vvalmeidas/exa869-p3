@@ -32,7 +32,6 @@ public class Analyzer {
 				return;
 			}
 		}
-		
 	}
 	
 	//<Class Declaration> ::= 'class' <Class Identification>
@@ -53,7 +52,6 @@ public class Analyzer {
 		Util.handleTerminal("}", true, false);		
 	}
 	
-	
 	//<Variable Declaration> ::= 'variables' '{' <Variable> '}' | <> 
 	public static void analiseVariableDeclaration() {
 		Util.handleTerminal("variables", true, false);
@@ -63,7 +61,6 @@ public class Analyzer {
 		AnalyzerSecondary.analiseVariable();
 
 		Util.handleTerminal("}", true, false);
-		
 	}
 	
 	//<Method Declaration> ::= 'method' <Type> Identifier '(' <Parameter Declaration> ')' '{' <Variable Declaration> <Commands> '}' <More Methods>
@@ -274,11 +271,9 @@ public class Analyzer {
 				TokensFlow.next();
 				return;
 			}
-		} else if(TokensFlow.hasNext()) {
-			Util.addError(First.Commands.toString());
-			
-		}
-
+		} 
+		
+		Util.addError(First.Commands.toString());
 	}
 	
 	//<While Statement> ::= 'while''(' <Expression> ')' '{' <Commands> '}'
@@ -336,10 +331,10 @@ public class Analyzer {
 					AnalyzerSecondary.analiseAttr();
 					AnalyzerSecondary.analiseVerif();
 					return;
-					} else {
-						AnalyzerSecondary.analiseVerif();
-						return;
-					}
+				} else {
+					AnalyzerSecondary.analiseVerif();
+					return;
+				}
 				
 			} else if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
 				AnalyzerSecondary.analiseAttr();
@@ -349,10 +344,9 @@ public class Analyzer {
 				AnalyzerSecondary.analiseVerif();
 				return;
 			}
-		} else if(TokensFlow.hasNext()) {
-			Util.addError(First.Attribution.toString());
-		}
-				
+		} 
+		
+		Util.addError(First.Attribution.toString());
 	}
 	
 }

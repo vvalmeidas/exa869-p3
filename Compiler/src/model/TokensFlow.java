@@ -37,7 +37,9 @@ public class TokensFlow {
 	}
 	
 	public static void next() {
-		index++;
+		if(index < tokensSet.size()) {
+			index++;
+		}
 	}
 	
 	public static boolean isEmpty() {
