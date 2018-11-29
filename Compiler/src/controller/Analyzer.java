@@ -226,52 +226,63 @@ public class Analyzer {
 		}
 	}
 	
-	//COMO IDENTIFICAR O ERRO AQUI??????
 	//<Commands>::= <If Statement><Commands> | <> | <While Statement><Commands> | <Read Statement><Commands>
     //              | <Attribution>';'<Commands> | <Write Statement><Commands> | <Return>';'
 	public static void analiseCommands() {
-		if(analiseIf()) {	
+		if(TokensFlow.hasNext() && First.check("If", TokensFlow.getToken())) {
+			analiseIf();
 			if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
-				return analiseCommands();
+				analiseCommands();
+				return;
 			} else {
-				return true;
+				return;
 			}
-		} else if(analiseWhileStatement()) {
+		} else if(TokensFlow.hasNext() && First.check("While", TokensFlow.getToken())) {
+			analiseWhileStatement();
 			if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
-				return analiseCommands();
+				analiseCommands();
+				return;
 			} else {
-				return true;
+				return;
 			}
-		} else if(analiseReadStatement()) {
+		} else if(TokensFlow.hasNext() && First.check("Read", TokensFlow.getToken())) {
+			analiseReadStatement();
 			if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
-				return analiseCommands();
+				analiseCommands();
+				return;
 			} else {
-				return true;
+				return;
 			}
-		} else if(analiseAttribution()) {
+		} else if(TokensFlow.hasNext() && First.check("Attribution", TokensFlow.getToken())) {
+			analiseAttribution();
 			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
 				TokensFlow.next();
 				
 				if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
-					return analiseCommands();
+					analiseCommands();
+					return;
 				} else {
-					return true;
+					return;
 				}
 			}
-		} else if(analiseWriteStatement()) {
+		} else if(TokensFlow.hasNext() && First.check("Write", TokensFlow.getToken())) {
+			analiseWriteStatement();
 			if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
-				return analiseCommands();
+				analiseCommands();
+				return;
 			} else {
-				return true;
+				return;
 			}
-		} else if(AnalyzerSecondary.analiseReturn()) {
+		} else if(TokensFlow.hasNext() && First.check("Return", TokensFlow.getToken())) {
+			AnalyzerSecondary.analiseReturn();
 			if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(";")) {
 				TokensFlow.next();
-				return true;
+				return;
 			}
+		} else if(TokensFlow.hasNext()) {
+			Util.addError(TokensFlow.getToken());
 		}
 
-		return false;
 	}
 	
 	//<While Statement> ::= 'while''(' <Expression> ')' '{' <Commands> '}'
@@ -300,60 +311,53 @@ public class Analyzer {
 		Util.handleTerminal(";", true, false);
 	}
 	
-	
-	//COMO IDENTIFICAR O ERRO AQUI??????
-	// <Attribution> ::= <Increment>Identifier<Array Verification><Attr> | Identifier<Array Verification><Attr><Verif>
-	public static boolean analiseAttribution() {
-		if(AnalyzerSecondary.analiseIncrement()) {
-			
-			if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
-				TokensFlow.next();
-				
-				if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
-					if(AnalyzerSecondary.analiseArrayVerification()) {
-						
-						if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
-							return AnalyzerSecondary.analiseAttr();
-						} else {
-							return true;
-						}
-						
-					}
-				} else if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
-					return AnalyzerSecondary.analiseAttr();
+	// <Attribution> ::= <Increment>Identifier<Array Verification><Attr> 
+	//					| Identifier<Array Verification><Attr><Verif>
+	public static void analiseAttribution() {
+		if(TokensFlow.hasNext() && First.check("Increment", TokensFlow.getToken())) {
+			AnalyzerSecondary.analiseIncrement();
+			Util.handleTerminal("IDENTIFICADOR", false, false);
+			if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
+				AnalyzerSecondary.analiseArrayVerification();
+				if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
+					AnalyzerSecondary.analiseAttr();
+					return;
 				} else {
-					return true;
+					return;
 				}
+			} else if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
+				AnalyzerSecondary.analiseAttr();
+				return;
+			} else {
+				return;
 			}
 			
-		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) { //segunda regra
-			TokensFlow.next();
-			
+		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) { 
+			TokensFlow.next();			
 			if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
-				if(AnalyzerSecondary.analiseArrayVerification()) {
-					
-					if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
-						if(AnalyzerSecondary.analiseAttr()) {
-							return AnalyzerSecondary.analiseVerif();
-						}
+				AnalyzerSecondary.analiseArrayVerification();
+				if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
+					AnalyzerSecondary.analiseAttr();
+					AnalyzerSecondary.analiseVerif();
+					return;
 					} else {
-						return AnalyzerSecondary.analiseVerif();
+						AnalyzerSecondary.analiseVerif();
+						return;
 					}
-					
-				}
 				
 			} else if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
-				
-				if(AnalyzerSecondary.analiseAttr()) {
-					return AnalyzerSecondary.analiseVerif();
-				}
+				AnalyzerSecondary.analiseAttr();
+				AnalyzerSecondary.analiseVerif();
+				return;
 				
 			} else {
-				return AnalyzerSecondary.analiseVerif();
+				AnalyzerSecondary.analiseVerif();
+				return;
 			}
+		} else if(TokensFlow.hasNext()) {
+			Util.addError(TokensFlow.getToken());
 		}
-		
-		return false;
+				
 	}
 	
 }

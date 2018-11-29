@@ -204,7 +204,65 @@ public class First {
 		add("void");
 	}};
 	
+	public static LinkedList<String> Value = new LinkedList<String>() {{
+		add("CADEIA_DE_CARACTERES");
+		add("false");
+		add("NUMBER");
+		add("true");
+	}};
 	
+	public static LinkedList<String> NormalAttribution2 = new LinkedList<String>() {{
+		add("--");
+		add("++");
+		add("=");
+	}};
+	
+	public static LinkedList<String> Complement = new LinkedList<String>() {{
+		add("(");
+	}};
+	
+	public static LinkedList<String> Increment = new LinkedList<String>() {{
+		add("--");
+		add("++");
+	}};
+	
+	public static LinkedList<String> ExpValue = new LinkedList<String>() {{
+		add("(");
+		add("false");
+		add("IDENTIFICADOR");
+		add("NUMBER");
+		add("true");
+	}};
+	
+	public static LinkedList<String> Param2 = new LinkedList<String>() {{
+		add("(");
+	}};
+	
+	public static LinkedList<String> If = new LinkedList<String>() {{
+		add("if");
+	}};
+	
+	public static LinkedList<String> While = new LinkedList<String>() {{
+		add("while");
+	}};
+	
+	public static LinkedList<String> Read = new LinkedList<String>() {{
+		add("read");
+	}};
+	
+	public static LinkedList<String> Attribution = new LinkedList<String>() {{
+		add("--");
+		add("++");
+		add("IDENTIFICADOR");
+	}};
+	
+	public static LinkedList<String> Write = new LinkedList<String>() {{
+		add("write");
+	}};
+	
+	public static LinkedList<String> Return = new LinkedList<String>() {{
+		add("return");
+	}};
 	
 	
 	
@@ -273,6 +331,30 @@ public class First {
 			return NewDeclaration.contains(token.getValue()) || NewDeclaration.contains(token.getTokenClass()); 
 		} else if(production == "ParameterDeclaration") {
 			return ParameterDeclaration.contains(token.getValue()) || ParameterDeclaration.contains(token.getTokenClass()); 
+		} else if(production == "Value") {
+			return Value.contains(token.getValue()) || Value.contains(token.getTokenClass()); 
+		} else if(production == "NormalAttribution2") {
+			return NormalAttribution2.contains(token.getValue()) || NormalAttribution2.contains(token.getTokenClass()); 
+		} else if(production == "Complement") {
+			return Complement.contains(token.getValue()) || Complement.contains(token.getTokenClass()); 
+		} else if(production == "Increment") {
+			return Increment.contains(token.getValue()) || Increment.contains(token.getTokenClass()); 
+		} else if(production == "ExpValue") {
+			return ExpValue.contains(token.getValue()) || ExpValue.contains(token.getTokenClass()); 
+		} else if(production == "Param2") {
+			return Param2.contains(token.getValue()) || Param2.contains(token.getTokenClass()); 
+		} else if(production == "If") {
+			return If.contains(token.getValue()) || If.contains(token.getTokenClass()); 
+		} else if(production == "While") {
+			return While.contains(token.getValue()) || While.contains(token.getTokenClass()); 
+		} else if(production == "Read") {
+			return Read.contains(token.getValue()) || Read.contains(token.getTokenClass()); 
+		} else if(production == "Attribution") {
+			return Attribution.contains(token.getValue()) || Attribution.contains(token.getTokenClass()); 
+		} else if(production == "Write") {
+			return Write.contains(token.getValue()) || Write.contains(token.getTokenClass()); 
+		} else if(production == "Return") {
+			return Return.contains(token.getValue()) || Return.contains(token.getTokenClass()); 
 		}
 		
 		

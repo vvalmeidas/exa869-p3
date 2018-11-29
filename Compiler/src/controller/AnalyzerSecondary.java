@@ -291,22 +291,22 @@ public class AnalyzerSecondary {
 		return;
 	}
 	
-	
-	//COMO DETECTAR ERROS AQUI?????
 	//<Return1> ::= Identifier <Array Verification> | <Value>
 	public static void analiseReturn1() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
-			TokensFlow.next();
-			
+			TokensFlow.next();			
 			if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
 				analiseArrayVerification();
 				return;
 			} else {
 				return;
 			}
-		} 
-		analiseValue();
-		return;
+		} else if(TokensFlow.hasNext() && First.check("Value", TokensFlow.getToken())) { 
+			analiseValue();
+			return;
+		} else if(TokensFlow.hasNext()) {
+			Util.addError(TokensFlow.getToken());
+		}
 	}
 	
 	//<Else Statement> ::= 'else''{'<Commands>'}' | <>
@@ -325,13 +325,16 @@ public class AnalyzerSecondary {
 			 
 	}
 	
-	//COMO DETECTAR ERROS AQUI?????
 	//<Verif> ::= <Normal Attribution2> | <Complement>
-	public static boolean analiseVerif() {
-		if(analiseNormalAttribution2()) {
-			return true;
-		} else {
-			return analiseComplement();
+	public static void analiseVerif() {
+		if(TokensFlow.hasNext() && First.check("NormalAttribution2", TokensFlow.getToken())) { 
+			analiseNormalAttribution2();
+			return;
+		} else if(TokensFlow.hasNext() && First.check("Complement", TokensFlow.getToken())) {
+			analiseComplement();
+			return;
+		} else if(TokensFlow.hasNext()) {
+			Util.addError(TokensFlow.getToken());
 		}
 	}
 	
@@ -347,31 +350,33 @@ public class AnalyzerSecondary {
 		}
 	}
 	
-	//COMO DETECTAR ERROS AQUI?????
 	//<Normal Attribution2> ::= '=' <Normal Attribution3> | <Increment>  
 	public static void analiseNormalAttribution2() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("=")) {
 			TokensFlow.next();
 			analiseNormalAttribution3();
 			return;
-		} else {
+		} else if(TokensFlow.hasNext() && First.check("Increment", TokensFlow.getToken())) {
 			analiseIncrement();
 			return;
+		} else if(TokensFlow.hasNext()) {
+			Util.addError(TokensFlow.getToken());
 		}
 	}
 	
-	//COMO DETECTAR ERROS AQUI?????
 	//<Normal Attribution3> ::= <Expression> | CadeCaracters
 	public static void analiseNormalAttribution3() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("CADEIA_DE_CARACTERES")) {
 			TokensFlow.next();
 			return;
-		} else {
+		} else if(TokensFlow.hasNext() && First.check("Expression", TokensFlow.getToken())){
 			Analyzer.analiseExpression();
+			return;
+		} else if(TokensFlow.hasNext()) {
+			Util.addError(TokensFlow.getToken());
 		}
 	}
 	
-	//COMO DETECTAR ERROS AQUI?????
 	//<Relational Exp> ::= RelationalOperator <Add Exp> <Logical Exp> | <Logical Exp>
 	public static void analiseRelationalExp() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("OPERADOR_RELACIONAL")) {
@@ -384,14 +389,11 @@ public class AnalyzerSecondary {
 				return;
 			}
 			
-		} else {
-			if(TokensFlow.hasNext() && First.check("LogicalExp", TokensFlow.getToken())) {
+		} else if(TokensFlow.hasNext() && First.check("LogicalExp", TokensFlow.getToken())) {
 				analiseLogicalExp();
 				return;
-			} else {
-				
-				return;
-			}
+		} else if(TokensFlow.hasNext()) {
+			Util.addError(TokensFlow.getToken());
 		}
 	}
 	
@@ -460,32 +462,37 @@ public class AnalyzerSecondary {
 		}
 	}
 	
-	//COMO DETECTAR ERROS AQUI?????
 	//<Neg Exp>  ::= '-' <Exp Value> |  <Exp Value> <G> | '!' <Exp Value> | '++' <Exp Value> | '--'<Exp Value>
-	public static boolean analiseNegExp() { 
+	public static void analiseNegExp() { 
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("-")) { //'-' <F>
 			TokensFlow.next();
-			return analiseExpValue();
+			analiseExpValue();
+			return;
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("!")) {
 			TokensFlow.next();
 			
-			return analiseExpValue();
+			analiseExpValue();
+			return;
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("++")) {
 			TokensFlow.next();
-			return analiseExpValue();
+			analiseExpValue();
+			return;
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("--")) {
 			TokensFlow.next();
-			return analiseExpValue();
-		} else {
-			
-			if(analiseExpValue()) {
+			analiseExpValue();
+			return;
+		} else if(TokensFlow.hasNext() && First.check("ExpValue", TokensFlow.getToken())) {
+				analiseExpValue();
 				if(TokensFlow.hasNext() && First.check("G", TokensFlow.getToken())) {
-					return analiseG();
+					analiseG();
+					return;
 				} else {
-					return true;
+					return;
 				}
-			}
-		return false;
+		} else if(TokensFlow.hasNext()) {
+			Util.addError(TokensFlow.getToken());
+		}
+
 	}
 	
 
@@ -502,78 +509,61 @@ public class AnalyzerSecondary {
 		}
 	}
 	
-	//COMO IDENTIFICAR O ERRO AQUI??????
 	////<Exp Value> ::= Number |  '(' <Expression> ')' |  Identifier<Array Verification><Attr><Param2> | 'true' | 'false' 
-	public static boolean analiseExpValue() { 
+	public static void analiseExpValue() { 
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("NUMERO")) {
 			TokensFlow.next();
-			return true;
+			return;
+			
 		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals("(")) {
 			TokensFlow.next();
-			if(Analyzer.analiseExpression()) {
-				if(TokensFlow.hasNext() && TokensFlow.getToken().getValue().equals(")")) {
-					TokensFlow.next();
-					return true;
-				}
+			if(TokensFlow.hasNext() && First.check("Expression", TokensFlow.getToken())){
+				Analyzer.analiseExpression();
+				Util.handleTerminal(")", true, false);
+				return;
 			}
 			
 		} else if(TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) { 
 			TokensFlow.next();
-			
 			if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
-				
-				if(analiseArrayVerification()) {
-					
-					if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
-						
-						if(analiseAttr()) {
-							
-							if(TokensFlow.hasNext() && First.check("Param2", TokensFlow.getToken())) {
-								return analiseParam2();
-							} else {
-								return true;
-							}
-							
-						} else {
-							return false;
-						}
-						
-					} else if(TokensFlow.hasNext() && First.check("Param2", TokensFlow.getToken())) {
-						return analiseParam2();
+				analiseArrayVerification();				
+				if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
+					analiseAttr();
+					if(TokensFlow.hasNext() && First.check("Param2", TokensFlow.getToken())) {
+						analiseParam2();
+						return;
 					} else {
-						return true;
-					}
+						return;
+					} 
 					
-				} else {
-					return false;
+				} else if(TokensFlow.hasNext() && First.check("Param2", TokensFlow.getToken())) {
+					analiseParam2();
+					return;
 				}
 				
 			} else if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
-				
-				if(analiseAttr()) {
-					
-					if(TokensFlow.hasNext() && First.check("Param2", TokensFlow.getToken())) {
-						return analiseParam2();
-					} else {
-						return true;
-					}
-					
+				analiseAttr();
+				if(TokensFlow.hasNext() && First.check("Param2", TokensFlow.getToken())) {
+					analiseParam2();
+					return;
 				} else {
-					return false;
+					return;
 				}
-				
+					
 			} else if(TokensFlow.hasNext() && First.check("Param2", TokensFlow.getToken())) {
-				return analiseParam2();
+				analiseParam2();
+				return;
 			} else {
-				return true;
+				return;
 			}
 			
 		} else if(TokensFlow.hasNext() && (TokensFlow.getToken().getValue().equals("true") || TokensFlow.getToken().getValue().equals("false"))) {
 			TokensFlow.next();
-			return true;
+			return;
+			
+		} else if(TokensFlow.hasNext()) {
+			Util.addError(TokensFlow.getToken());
 		}
-
-		return false;
 	}	
 	
 	//<Param2>::= <Complement> | <>
@@ -595,7 +585,7 @@ public class AnalyzerSecondary {
 		}
 	}
 	
-	//COMO IDENTIFICAR O ERRO AQUI??????
+
 	//<Param> ::= <> | <Expression><MoreParam> | CadeCaracters<MoreParam> 
 	public static void analiseParam() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("CADEIA_DE_CARACTERES")) {
@@ -607,7 +597,7 @@ public class AnalyzerSecondary {
 				return;
 			}			
 		}
-		else {
+		else if(TokensFlow.hasNext() && First.check("Expression", TokensFlow.getToken())) {
 			Analyzer.analiseExpression();			
 			if(TokensFlow.hasNext() && First.check("MoreParam", TokensFlow.getToken())) {
 				analiseMoreParam();
@@ -615,7 +605,9 @@ public class AnalyzerSecondary {
 			} else {
 				return;
 			}
-		}  
+		} else if(TokensFlow.hasNext()) {
+			Util.addError(TokensFlow.getToken());
+		}
 		
 	}
 	
@@ -627,12 +619,10 @@ public class AnalyzerSecondary {
 			return;
 	}
 	
-	//COMO IDENTIFICAR O ERRO AQUI??????
 	//<ObrigatoryParam> ::= <Expression><MoreParam> | CadeCaracters<MoreParam>
 	public static void analiseObrigatoryParam() {
 		if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("CADEIA_DE_CARACTERES")) {
-			TokensFlow.next();
-			
+			TokensFlow.next();			
 			if(TokensFlow.hasNext() && First.check("MoreParam", TokensFlow.getToken())) {
 				analiseMoreParam();
 				return;
@@ -640,15 +630,16 @@ public class AnalyzerSecondary {
 				return;
 			}
 		}
-		else {
-			Analyzer.analiseExpression();
-		
+		else if(TokensFlow.hasNext() && First.check("Expression", TokensFlow.getToken())) {
+			Analyzer.analiseExpression();		
 			if(TokensFlow.hasNext() && First.check("MoreParam", TokensFlow.getToken())) {
 				analiseMoreParam();
 				return;
 			} else {
 				return;
 			}
+		} else if(TokensFlow.hasNext()) {
+			Util.addError(TokensFlow.getToken());
 		}
 	}
 	

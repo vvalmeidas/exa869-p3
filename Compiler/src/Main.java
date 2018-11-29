@@ -31,7 +31,7 @@ public class Main {
 		
 		TokensFlow.setTokensSet(tokensList);
 		
-		System.out.println(Analyzer.analiseExpression());
+		//System.out.println(Analyzer.analiseExpression());
 		System.out.println(TokensFlow.isEmpty());
 		
 	}
