@@ -23,8 +23,8 @@ public class AnalyzerSecondary {
 	
 	//<Class Identification> ::= Identifier <Class Heritage> '{' <Class Body> '}'
 	public static void analiseClassIdentification() {
-		
 		Util.handleTerminal("IDENTIFICADOR", false, false);
+		
 
 		if(TokensFlow.hasNext() && First.check("ClassHeritage", TokensFlow.getToken())) {
 			analiseClassHeritage();
@@ -32,11 +32,11 @@ public class AnalyzerSecondary {
 			analiseClassBody();
 			Util.handleTerminal("}", true, false);
 			return;
-			
- 		} else {
- 			Util.handleTerminal("{", true, false);
+ 		} else {			
+			Util.handleTerminal("{", true, false);
 			analiseClassBody();
 			Util.handleTerminal("}", true, false);
+			
 			return;
 		}
 	}

@@ -330,7 +330,7 @@ public class First {
 		add("NUMERO");
 	}};
 	
-	public static LinkedList<String> ObrigatoryParam = new LinkedList<String>() {{
+	public static LinkedList<String> ObrigatoryParam  = new LinkedList<String>() {{
 		add("-");
 		add("--");
 		add("!");
@@ -343,8 +343,12 @@ public class First {
 		add("NUMERO");
 	}};
 	
-	public static LinkedList<String> Writing1 = new LinkedList<String>() {{
+	public static LinkedList<String> Writing1  = new LinkedList<String>() {{
 		add("CADEIA_DE_CARACTERES");
+		add("IDENTIFICADOR");
+	}};
+	
+	public static LinkedList<String> ClassIdentification = new LinkedList<String>() {{
 		add("IDENTIFICADOR");
 	}};
 	
@@ -445,8 +449,20 @@ public class First {
 			return Type.contains(token.getValue()) || Type.contains(token.getTokenClass()); 
 		} else if(production == "Return1") {
 			return Return1.contains(token.getValue()) || Return1.contains(token.getTokenClass()); 
-		}
-		 
+		} else if(production == "ClassIdentification") {
+			return ClassIdentification.contains(token.getValue()) || ClassIdentification.contains(token.getTokenClass()); 
+		} else if(production == "Writing1") {
+			return Writing1.contains(token.getValue()) || Writing1.contains(token.getTokenClass()); 
+		} else if(production == "ObrigatoryParam") {
+			return ObrigatoryParam.contains(token.getValue()) || ObrigatoryParam.contains(token.getTokenClass()); 
+		} else if(production == "NegExp") {
+			return NegExp.contains(token.getValue()) || NegExp.contains(token.getTokenClass()); 
+		} else if(production == "NormalAttribution3") {
+			return NormalAttribution3.contains(token.getValue()) || NormalAttribution3.contains(token.getTokenClass()); 
+		} else if(production == "Verif") {
+			return Verif.contains(token.getValue()) || Verif.contains(token.getTokenClass()); 
+		} 
+	
 		return false;
 	}
 	

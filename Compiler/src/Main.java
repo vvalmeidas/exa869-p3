@@ -12,6 +12,7 @@ import model.Util;
 
 public class Main {
 
+
 	public static void main(String[] args) throws IOException {		
 		Map<String, String> sourceFiles = FileController.readFiles();
 		Iterator<String> iSource = sourceFiles.keySet().iterator();
@@ -28,7 +29,7 @@ public class Main {
 			FileController.saveSyntacticResults(fileName);
 		}
 		
-		System.out.println(Util.errors.size());
+		//System.out.println(Util.errors.size());
 		
 		//System.out.println(tokensList);
 		
