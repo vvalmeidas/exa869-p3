@@ -8,6 +8,13 @@ import model.Token;
 import model.TokensFlow;
 import model.Util;
 
+/**
+ * Classe que implementa os principais métodos para realização da análise sintática.
+ *
+ * @author Nadine Cerqueira
+ * @author Valmir Vinicius
+ *
+ */
 public class Analyzer {
 	
 	//<Global> ::= <Constant Declaration> <Class Declaration> <More Classes>
@@ -39,6 +46,16 @@ public class Analyzer {
 		if(Util.handleTerminal("class", true, false)) {
 			if(TokensFlow.hasNext()) {
 				AnalyzerSecondary.analiseClassIdentification();
+				
+				while(TokensFlow.hasNext()) {
+					if(First.check("MoreClasses", TokensFlow.getToken())) {
+						break;
+					}
+					
+					TokensFlow.next();
+				}
+				
+				return;
 			}
 		} else {
 			while(TokensFlow.hasNext()) {
@@ -56,40 +73,263 @@ public class Analyzer {
 	//<Constant Declaration> ::= 'const' '{' <Constants> '}' | <> 
 	public static void analiseConstantDeclaration() {	
 		Util.handleTerminal("const", true, false);
-		Util.handleTerminal("{", true, false);
+		
+		if(!Util.handleTerminal("{", true, false)) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(First.check("Constants", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}")) {
+					break;
+				}
+				
+				if(First.check("ClassDeclaration", TokensFlow.getToken())) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.addAll(First.Constants);
+					Util.addError(list.toString());
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				LinkedList<String> list = new LinkedList<String>();
+				list.addAll(First.Constants);
+				Util.addError(list.toString());
+				return;
+			}
+		}
 		
 		AnalyzerSecondary.analiseConstants();
 		
-		Util.handleTerminal("}", true, false);	
+		if(!Util.handleTerminal("}", true, false, new LinkedList<String>(First.Constants))) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(First.check("ClassDeclaration", TokensFlow.getToken())) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.addAll(First.Constants);
+					Util.addError(list.toString());
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				LinkedList<String> list = new LinkedList<String>();
+				list.addAll(First.Constants);
+				Util.addError(list.toString());
+				return;
+			}
+			
+		}
 	}
 	
 	//<Variable Declaration> ::= 'variables' '{' <Variable> '}' | <> 
 	public static void analiseVariableDeclaration() {
 		Util.handleTerminal("variables", true, false);
 		
-		Util.handleTerminal("{", true, false);
+		if(!Util.handleTerminal("{", true, false)) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(First.check("Variable", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}")) {
+					break;
+				}
+				
+				if(First.check("MethodDeclaration", TokensFlow.getToken())) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.addAll(First.Variable);
+					Util.addError(list.toString());
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				LinkedList<String> list = new LinkedList<String>();
+				list.addAll(First.Variable);
+				Util.addError(list.toString());
+				return;
+			}
+		}
 
 		AnalyzerSecondary.analiseVariable();
 
-		Util.handleTerminal("}", true, false);
+		if(!Util.handleTerminal("}", true, false, new LinkedList<String>(First.Variable))) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(First.check("MethodDeclaration", TokensFlow.getToken())) {
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+		}
+
 	}
 	
 	//<Method Declaration> ::= 'method' <Type> Identifier '(' <Parameter Declaration> ')' '{' <Variable Declaration> <Commands> '}' <More Methods>
 	public static void analiseMethodDeclaration() {
 		if(Util.handleTerminal("method", true, false)) {
+			
 			AnalyzerSecondary.analiseType();
 			
-			Util.handleTerminal("IDENTIFICADOR", false, false);
+			if(!Util.handleTerminal("IDENTIFICADOR", false, false)) {
+				if(TokensFlow.isEmpty()) {
+					return;
+				}
+				
+				while(TokensFlow.hasNext()) {
+					if(TokensFlow.getToken().getValue().equals("(") ||
+						First.check("ParameterDeclaration", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals(")") ||
+						TokensFlow.getToken().getValue().equals("{") ||
+						First.check("VariableDeclaration", TokensFlow.getToken()) ||
+						First.check("Commands", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MoreMethods", TokensFlow.getToken())) {
+						break;
+					}
+					
+					if(First.check("MoreClasses", TokensFlow.getToken())) {
+						LinkedList<String> list = new LinkedList<String>();
+						list.add("(");
+						Util.addError(list.toString());
+						return;
+					}
+				}
+				
+				if(TokensFlow.isEmpty()) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.add("(");
+					Util.addError(list.toString());
+					return;
+				}
+
+			}
 			
-			Util.handleTerminal("(", true, false);
+			if(!Util.handleTerminal("(", true, false)) {
+				if(TokensFlow.isEmpty()) {
+					return;
+				}
+								
+				while(TokensFlow.hasNext()) {
+					if(First.check("ParameterDeclaration", TokensFlow.getToken()) ||
+							TokensFlow.getToken().getValue().equals(")") ||
+							TokensFlow.getToken().getValue().equals("{") ||
+							First.check("VariableDeclaration", TokensFlow.getToken()) ||
+							First.check("Commands", TokensFlow.getToken()) ||
+							TokensFlow.getToken().getValue().equals("}") ||
+							First.check("MoreMethods", TokensFlow.getToken())) {
+							break;
+					}
+					
+					if(First.check("MoreClasses", TokensFlow.getToken())) {
+						LinkedList<String> list = new LinkedList<String>();
+						list.addAll(First.ParameterDeclaration);
+						list.add(")");
+						Util.addError(list.toString());
+						return;
+					}
+				}
+				
+				if(TokensFlow.isEmpty()) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.addAll(First.ParameterDeclaration);
+					list.add(")");
+					Util.addError(list.toString());
+					return;
+				}
+				
+			}
 			
 			if(TokensFlow.hasNext() && First.check("ParameterDeclaration", TokensFlow.getToken())) {
-
 				AnalyzerSecondary.analiseParameterDeclaration();
 
-				Util.handleTerminal(")", true, false);
+				if(!Util.handleTerminal(")", true, false)) {
+					if(TokensFlow.isEmpty()) {
+						return;
+					}
+					
+					while(TokensFlow.hasNext()) {
+						if(TokensFlow.getToken().getValue().equals("{") ||
+								First.check("VariableDeclaration", TokensFlow.getToken()) ||
+								First.check("Commands", TokensFlow.getToken()) ||
+								TokensFlow.getToken().getValue().equals("}") ||
+								First.check("MoreMethods", TokensFlow.getToken())) {
+								break;
+						}
+						
+						if(First.check("MoreClasses", TokensFlow.getToken())) {
+							LinkedList<String> list = new LinkedList<String>();
+							list.add("{");
+							Util.addError(list.toString());
+							return;
+						}
+						
+						TokensFlow.next();
+					}
+					
+					if(TokensFlow.isEmpty()) {
+						LinkedList<String> list = new LinkedList<String>();
+						list.add("{");
+						Util.addError(list.toString());
+						return;
+					}
+				}
 				
-				Util.handleTerminal("{", true, false);
+				if(!Util.handleTerminal("{", true, false)) {
+					if(TokensFlow.isEmpty()) {
+						return;
+					}
+					
+					while(TokensFlow.hasNext()) {
+						if(First.check("VariableDeclaration", TokensFlow.getToken()) ||
+								First.check("Commands", TokensFlow.getToken()) ||
+								TokensFlow.getToken().getValue().equals("}") ||
+								First.check("MoreMethods", TokensFlow.getToken())) {
+								break;
+						}
+						
+						if(First.check("MoreClasses", TokensFlow.getToken())) {
+							LinkedList<String> list = new LinkedList<String>();
+							list.addAll(First.VariableDeclaration);
+							list.addAll(First.Commands);
+							list.add("}");
+							Util.addError(list.toString());
+							return;
+						}
+						
+						TokensFlow.next();
+					}
+					
+					if(TokensFlow.isEmpty()) {
+						LinkedList<String> list = new LinkedList<String>();
+						list.addAll(First.VariableDeclaration);
+						list.addAll(First.Commands);
+						list.add("}");
+						Util.addError(list.toString());
+						return;
+					}
+				}
 
 				if(TokensFlow.hasNext() && First.check("VariableDeclaration", TokensFlow.getToken())) {
 
@@ -97,7 +337,32 @@ public class Analyzer {
 					
 					if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
 						analiseCommands();
-						Util.handleTerminal("}", true, false);										
+						
+						if(!Util.handleTerminal("}", true, false)) {
+							if(TokensFlow.isEmpty()) {
+								return;
+							}
+							
+							while(TokensFlow.hasNext()) {
+								if(First.check("MoreMethods", TokensFlow.getToken())) {
+									break;
+								}
+								
+								if(First.check("MoreClasses", TokensFlow.getToken())) {
+									return;
+								}
+								
+								TokensFlow.next();
+							}
+							
+							if(TokensFlow.isEmpty()) {
+								LinkedList<String> list = new LinkedList<String>();
+								list.add("}");
+								Util.addError(list.toString());
+								return;
+							}
+						}
+						
 						if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
 							AnalyzerSecondary.analiseMoreMethods();
 							return;
@@ -106,8 +371,30 @@ public class Analyzer {
 						}
 					
 					} else {
-						Util.handleTerminal("}", true, false);
+						if(!Util.handleTerminal("}", true, false)) {
+							if(TokensFlow.isEmpty()) {
+								return;
+							}
 							
+							while(TokensFlow.hasNext()) {
+								if(First.check("MoreMethods", TokensFlow.getToken())) {
+									break;
+								}
+								
+								if(First.check("MoreClasses", TokensFlow.getToken())) {
+									return;
+								}
+								TokensFlow.next();
+							}
+							
+							if(TokensFlow.isEmpty()) {
+								LinkedList<String> list = new LinkedList<String>();
+								list.add("}");
+								Util.addError(list.toString());
+								return;
+							}
+						}
+						
 						if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
 							AnalyzerSecondary.analiseMoreMethods();
 							return;
@@ -117,7 +404,30 @@ public class Analyzer {
 					}
 				} else if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
 					analiseCommands();
-					Util.handleTerminal("}", true, false);
+					if(!Util.handleTerminal("}", true, false)) {
+						if(TokensFlow.isEmpty()) {
+							return;
+						}
+						
+						while(TokensFlow.hasNext()) {
+							if(First.check("MoreMethods", TokensFlow.getToken())) {
+								break;
+							}
+							
+							if(First.check("MoreClasses", TokensFlow.getToken())) {
+								return;
+							}
+							
+							TokensFlow.next();
+						}
+						
+						if(TokensFlow.isEmpty()) {
+							LinkedList<String> list = new LinkedList<String>();
+							list.add("}");
+							Util.addError(list.toString());
+							return;
+						}
+					}
 					if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
 						AnalyzerSecondary.analiseMoreMethods();
 						return;
@@ -125,7 +435,30 @@ public class Analyzer {
 						return;
 					}
 				} else {
-					Util.handleTerminal("}", true, false);
+					if(!Util.handleTerminal("}", true, false)) {
+						if(TokensFlow.isEmpty()) {
+							return;
+						}
+						
+						while(TokensFlow.hasNext()) {
+							if(First.check("MoreMethods", TokensFlow.getToken())) {
+								break;
+							}
+							
+							if(First.check("MoreClasses", TokensFlow.getToken())) {
+								return;
+							}
+							
+							TokensFlow.next();
+						}
+						
+						if(TokensFlow.isEmpty()) {
+							LinkedList<String> list = new LinkedList<String>();
+							list.add("}");
+							Util.addError(list.toString());
+							return;
+						}
+					}
 					
 					if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
 						AnalyzerSecondary.analiseMoreMethods();
@@ -135,15 +468,103 @@ public class Analyzer {
 					}
 				}
 			} else {
-				Util.handleTerminal(")", true, false);
-				Util.handleTerminal("{", true, false);
+				if(!Util.handleTerminal(")", true, false)) {
+					if(TokensFlow.isEmpty()) {
+						return;
+					}
+					
+					while(TokensFlow.hasNext()) {
+						if(TokensFlow.getToken().getValue().equals("{") ||
+								First.check("VariableDeclaration", TokensFlow.getToken()) ||
+								First.check("Commands", TokensFlow.getToken()) ||
+								TokensFlow.getToken().getValue().equals("}") ||
+								First.check("MoreMethods", TokensFlow.getToken())) {
+								break;
+						}
+						
+						if(First.check("MoreClasses", TokensFlow.getToken())) {
+							LinkedList<String> list = new LinkedList<String>();
+							list.add("{");
+							Util.addError(list.toString());
+							return;
+						}
+						
+						TokensFlow.next();
+					}
+					
+					if(TokensFlow.isEmpty()) {
+						LinkedList<String> list = new LinkedList<String>();
+						list.add("{");
+						Util.addError(list.toString());
+						return;
+					}
+				}
+				
+				if(!Util.handleTerminal("{", true, false)) {
+					if(TokensFlow.isEmpty()) {
+						return;
+					}
+					
+					while(TokensFlow.hasNext()) {
+						if(First.check("VariableDeclaration", TokensFlow.getToken()) ||
+								First.check("Commands", TokensFlow.getToken()) ||
+								TokensFlow.getToken().getValue().equals("}") ||
+								First.check("MoreMethods", TokensFlow.getToken())) {
+								break;
+						}
+						
+						if(First.check("MoreClasses", TokensFlow.getToken())) {
+							LinkedList<String> list = new LinkedList<String>();
+							list.addAll(First.VariableDeclaration);
+							list.addAll(First.Commands);
+							list.add("}");
+							Util.addError(list.toString());
+							return;
+						}
+						
+						TokensFlow.next();
+					}
+					
+					if(TokensFlow.isEmpty()) {
+						LinkedList<String> list = new LinkedList<String>();
+						list.addAll(First.VariableDeclaration);
+						list.addAll(First.Commands);
+						list.add("}");
+						Util.addError(list.toString());
+						return;
+					}
+				}
 
 				if(TokensFlow.hasNext() && First.check("VariableDeclaration", TokensFlow.getToken())) { 
 					analiseVariableDeclaration();
 					if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
 						analiseCommands();
-						Util.handleTerminal("}", true, false);
-									
+
+						if(!Util.handleTerminal("}", true, false, new LinkedList<String>(First.Commands))) {
+							if(TokensFlow.isEmpty()) {
+								return;
+							}
+							
+							while(TokensFlow.hasNext()) {
+								if(First.check("MoreMethods", TokensFlow.getToken())) {
+									break;
+								}
+								
+								if(First.check("MoreClasses", TokensFlow.getToken())) {
+									return;
+								}
+								
+								TokensFlow.next();
+							}
+							
+							if(TokensFlow.isEmpty()) {
+								LinkedList<String> list = new LinkedList<String>();
+								list.add("}");
+								Util.addError(list.toString());
+								return;
+							}
+						}
+						
 						if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
 							AnalyzerSecondary.analiseMoreMethods();
 							return;
@@ -152,7 +573,66 @@ public class Analyzer {
 						}
 						
 					} else {
-						Util.handleTerminal("}", true, false);
+						if(!Util.handleTerminal("}", true, false, new LinkedList<String>(First.Commands))) {
+							if(TokensFlow.isEmpty()) {
+								return;
+							}
+							
+							while(TokensFlow.hasNext()) {
+								if(First.check("MoreMethods", TokensFlow.getToken()) ||
+										First.check("Commands", TokensFlow.getToken())) {
+									break;
+								}
+								
+								if(First.check("MoreClasses", TokensFlow.getToken())) {
+									return;
+								}
+								
+								TokensFlow.next();
+							}
+							
+							if(TokensFlow.isEmpty()) {
+								LinkedList<String> list = new LinkedList<String>();
+								list.addAll(First.Commands);
+								list.add("}");
+								Util.addError(list.toString());
+								return;
+							}
+						}
+						
+						if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+							analiseCommands();
+							if(!Util.handleTerminal("}", true, false, new LinkedList<String>(First.Commands))) {
+								if(TokensFlow.isEmpty()) {
+									return;
+								}
+								
+								while(TokensFlow.hasNext()) {
+									if(First.check("MoreMethods", TokensFlow.getToken())) {
+										break;
+									}
+									
+									if(First.check("MoreClasses", TokensFlow.getToken())) {
+										return;
+									}
+									
+									TokensFlow.next();
+								}
+								
+								if(TokensFlow.isEmpty()) {
+									LinkedList<String> list = new LinkedList<String>();
+									list.add("}");
+									Util.addError(list.toString());
+									return;
+								}
+							}
+							if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+								AnalyzerSecondary.analiseMoreMethods();
+								return;
+							} else {
+								return;
+							}
+						}
 						
 						if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
 							AnalyzerSecondary.analiseMoreMethods();
@@ -164,8 +644,30 @@ public class Analyzer {
 					
 				} else if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
 					analiseCommands();
-					Util.handleTerminal("}", true, false);
-
+					if(!Util.handleTerminal("}", true, false, new LinkedList<String>(First.Commands))) {
+						if(TokensFlow.isEmpty()) {
+							return;
+						}
+						
+						while(TokensFlow.hasNext()) {
+							if(First.check("MoreMethods", TokensFlow.getToken())) {
+								break;
+							}
+							
+							if(First.check("MoreClasses", TokensFlow.getToken())) {
+								return;
+							}
+							
+							TokensFlow.next();
+						}
+						
+						if(TokensFlow.isEmpty()) {
+							LinkedList<String> list = new LinkedList<String>();
+							list.add("}");
+							Util.addError(list.toString());
+							return;
+						}
+					}
 					if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
 						AnalyzerSecondary.analiseMoreMethods();
 						return;
@@ -173,7 +675,69 @@ public class Analyzer {
 						return;
 					}
 				} else {
-					Util.handleTerminal("}", true, false);
+					
+					if(!Util.handleTerminal("}", true, false, new LinkedList<String>(First.Commands))) {
+						if(TokensFlow.isEmpty()) {
+							return;
+						}
+						
+						while(TokensFlow.hasNext()) {
+							if(First.check("MoreMethods", TokensFlow.getToken()) ||
+									First.check("Commands", TokensFlow.getToken())) {
+								break;
+							}
+							
+							if(First.check("MoreClasses", TokensFlow.getToken())) {
+								return;
+							}
+							
+							TokensFlow.next();
+						}
+						
+						if(TokensFlow.isEmpty()) {
+							LinkedList<String> list = new LinkedList<String>();
+							list.addAll(First.Commands);
+							list.add("}");
+							Util.addError(list.toString());
+							return;
+						}
+					}
+					
+					if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
+						analiseCommands();
+						if(!Util.handleTerminal("}", true, false, new LinkedList<String>(First.Commands))) {
+							if(TokensFlow.isEmpty()) {
+								return;
+							}
+							
+							while(TokensFlow.hasNext()) {
+								if(First.check("MoreMethods", TokensFlow.getToken())) {
+									break;
+								}
+								
+								if(First.check("MoreClasses", TokensFlow.getToken())) {
+									return;
+								}
+								
+								TokensFlow.next();
+							}
+							
+							if(TokensFlow.isEmpty()) {
+								LinkedList<String> list = new LinkedList<String>();
+								list.add("}");
+								Util.addError(list.toString());
+								return;
+							}
+						}
+						if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
+							AnalyzerSecondary.analiseMoreMethods();
+							return;
+						} else {
+							return;
+						}
+					}
+					
+					
 					if(TokensFlow.hasNext() && First.check("MoreMethods", TokensFlow.getToken())) {
 						AnalyzerSecondary.analiseMoreMethods();
 						return;
@@ -183,6 +747,7 @@ public class Analyzer {
 				}
 			}
 		} else {
+
 			while(TokensFlow.hasNext()) {
 				if(First.check("MoreMethods", TokensFlow.getToken())) {
 					break;
@@ -194,7 +759,7 @@ public class Analyzer {
 			return;
 		}
 		
-		
+
 
 	}
 	
@@ -207,24 +772,274 @@ public class Analyzer {
 	//<Write Statement> ::= 'write''('<Writing_1>')' ';'
 	public static void analiseWriteStatement() {
 		Util.handleTerminal("write", true, false);
-		Util.handleTerminal("(", true, false);
+
+		if(!Util.handleTerminal("(", true, false)) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(TokensFlow.getToken().getValue().equals(")") ||
+						First.check("Writing1", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals(";")) {
+					break;
+				}
+				
+				if(First.check("Commands", TokensFlow.getToken()) || 
+						TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MoreClasses", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("method")) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.addAll(First.Writing1);
+					Util.addError(list.toString());
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				LinkedList<String> list = new LinkedList<String>();
+				list.addAll(First.Writing1);
+				Util.addError(list.toString());
+				return;
+			}
+		}
+
 		AnalyzerSecondary.analiseWriting1();
-		Util.handleTerminal(")", true, false);
-		Util.handleTerminal(";", true, false);
+		
+		if(!Util.handleTerminal(")", true, false)) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(TokensFlow.getToken().getValue().equals(";")) {
+					break;
+				}
+				
+				if(First.check("Commands", TokensFlow.getToken()) || 
+						TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MoreClasses", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("method")) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.add(";");
+					Util.addError(list.toString());
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				LinkedList<String> list = new LinkedList<String>();
+				list.add(";");
+				Util.addError(list.toString());
+				return;
+			}
+		}
+		
+		
+		if(!Util.handleTerminal(";", true, false)) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(First.check("Commands", TokensFlow.getToken()) || 
+						TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MoreClasses", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("method")) {
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+		}
 	}
 	
 	//<If Statement> ::= 'if''('<Expression>')' 'then' '{'<Commands>'}'<Else Statement>
 	public static void analiseIf() {
 		Util.handleTerminal("if", true, false);
-		Util.handleTerminal("(", true, false);
+		
+		if(!Util.handleTerminal("(", true, false)) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(TokensFlow.getToken().getValue().equals("(") ||
+						First.check("Expression", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals(")") ||
+						TokensFlow.getToken().getValue().equals("then") ||
+						TokensFlow.getToken().getValue().equals("{") ||
+						First.check("Commands", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}") ||
+						TokensFlow.getToken().getValue().equals("ElseStatement")) {
+					break;
+				}
+				
+				if(First.check("Commands", TokensFlow.getToken()) || 
+						TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MoreClasses", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("method")) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.addAll(First.Expression);
+					Util.addError(list.toString());
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				LinkedList<String> list = new LinkedList<String>();
+				list.addAll(First.Expression);
+				Util.addError(list.toString());
+				return;
+			}
+		}
+		
+		
 		analiseExpression();
-		Util.handleTerminal(")", true, false);
-		Util.handleTerminal("then", true, false);
-		Util.handleTerminal("{", true, false);
+		
+		if(!Util.handleTerminal(")", true, false)) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(TokensFlow.getToken().getValue().equals("then") ||
+						TokensFlow.getToken().getValue().equals("{") ||
+						First.check("Commands", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}") ||
+						TokensFlow.getToken().getValue().equals("ElseStatement")) {
+					break;
+				}
+				
+				if(First.check("Commands", TokensFlow.getToken()) || 
+						TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MoreClasses", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("method")) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.add("then");
+					Util.addError(list.toString());
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				LinkedList<String> list = new LinkedList<String>();
+				list.add("then");
+				Util.addError(list.toString());
+				return;
+			}
+		}
+		
+		if(!Util.handleTerminal("then", true, false)) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(TokensFlow.getToken().getValue().equals("{") ||
+						First.check("Commands", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}") ||
+						TokensFlow.getToken().getValue().equals("ElseStatement")) {
+					break;
+				}
+				
+				if(First.check("Commands", TokensFlow.getToken()) || 
+						TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MoreClasses", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("method")) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.add("{");
+					Util.addError(list.toString());
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				LinkedList<String> list = new LinkedList<String>();
+				list.add("{");
+				Util.addError(list.toString());
+				return;
+			}
+		}
+		
+		if(!Util.handleTerminal("{", true, false)) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(First.check("Commands", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}") ||
+						TokensFlow.getToken().getValue().equals("ElseStatement")) {
+					break;
+				}
+				
+				if(First.check("Commands", TokensFlow.getToken()) || 
+						TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MoreClasses", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("method")) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.addAll(First.Commands);
+					list.add("}");
+					Util.addError(list.toString());
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				LinkedList<String> list = new LinkedList<String>();
+				list.addAll(First.Commands);
+				list.add("}");
+				Util.addError(list.toString());
+				return;
+			}
+		}
+		
 
 		if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
 			analiseCommands();
-			Util.handleTerminal("}", true, false);
+			
+			if(!Util.handleTerminal("}", true, false, new LinkedList<String>(First.Commands))) {
+				if(TokensFlow.isEmpty()) {
+					return;
+				}
+				
+				while(TokensFlow.hasNext()) {
+					if(TokensFlow.getToken().getValue().equals("ElseStatement")) {
+						break;
+					}
+					
+					if(TokensFlow.getToken().getValue().equals("}") ||
+							First.check("MoreClasses", TokensFlow.getToken()) ||
+							TokensFlow.getToken().getValue().equals("method")) {
+						return;
+					}
+					
+					TokensFlow.next();
+				}
+				
+				if(TokensFlow.isEmpty()) {
+					return;
+				}
+			}
+			
+			
 			if(TokensFlow.hasNext() && First.check("ElseStatement", TokensFlow.getToken())) {
 				AnalyzerSecondary.analiseElseStatement();
 				return;
@@ -233,7 +1048,68 @@ public class Analyzer {
 			}
 
 		} else {
-			Util.handleTerminal("}", true, false);
+			if(!Util.handleTerminal("}", true, false, new LinkedList<String>(First.Commands))) {
+				if(TokensFlow.isEmpty()) {
+					return;
+				}
+				
+				while(TokensFlow.hasNext()) {
+					if(TokensFlow.getToken().getValue().equals("ElseStatement") ||
+							First.check("Commands", TokensFlow.getToken())) {
+						break;
+					}
+					
+					if(First.check("Commands", TokensFlow.getToken()) || 
+							TokensFlow.getToken().getValue().equals("}") ||
+							First.check("MoreClasses", TokensFlow.getToken()) ||
+							TokensFlow.getToken().getValue().equals("method")) {
+						return;
+					}
+					
+					TokensFlow.next();
+				}
+				
+				if(TokensFlow.isEmpty()) {
+					return;
+				}
+			}
+			
+			if(First.check("Commands", TokensFlow.getToken())) {
+				analiseCommands();
+				
+				if(!Util.handleTerminal("}", true, false, new LinkedList<String>(First.Commands))) {
+					if(TokensFlow.isEmpty()) {
+						return;
+					}
+					
+					while(TokensFlow.hasNext()) {
+						if(TokensFlow.getToken().getValue().equals("ElseStatement")) {
+							break;
+						}
+						
+						if(TokensFlow.getToken().getValue().equals("}") ||
+								First.check("MoreClasses", TokensFlow.getToken()) ||
+								TokensFlow.getToken().getValue().equals("method")) {
+							return;
+						}
+						
+						TokensFlow.next();
+					}
+					
+					if(TokensFlow.isEmpty()) {
+						return;
+					}
+				}
+				
+				
+				if(TokensFlow.hasNext() && First.check("ElseStatement", TokensFlow.getToken())) {
+					AnalyzerSecondary.analiseElseStatement();
+					return;
+				} else {
+					return;
+				}
+			}
+			
 			if(TokensFlow.hasNext() && First.check("ElseStatement", TokensFlow.getToken())) {
 				AnalyzerSecondary.analiseElseStatement();
 				return;
@@ -272,9 +1148,9 @@ public class Analyzer {
 			}
 		} else if(TokensFlow.hasNext() && First.check("Attribution", TokensFlow.getToken())) {
 			analiseAttribution();
-			
+
 			Util.handleTerminal(";", true, false);
-			
+
 			if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
 				analiseCommands();
 				return;
@@ -310,16 +1186,190 @@ public class Analyzer {
 	//<While Statement> ::= 'while''(' <Expression> ')' '{' <Commands> '}'
 	public static void analiseWhileStatement() {
 		Util.handleTerminal("while", true, false);
-		Util.handleTerminal("(", true, false);
+		
+		if(!Util.handleTerminal("(", true, false)) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(First.check("Expression", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals(")") ||
+						TokensFlow.getToken().getValue().equals("{") ||
+						First.check("Commands", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}")) {
+					break;
+				}
+				
+				if(First.check("Commands", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MoreClasses", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("method")) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.addAll(First.Expression);
+					Util.addError(list.toString());
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				LinkedList<String> list = new LinkedList<String>();
+				list.addAll(First.Expression);
+				Util.addError(list.toString());
+				return;
+			}
+		}
+		
 		analiseExpression();
-		Util.handleTerminal(")", true, false);
-		Util.handleTerminal("{", true, false);
+		
+		if(!Util.handleTerminal(")", true, false)) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(TokensFlow.getToken().getValue().equals("{") ||
+						First.check("Commands", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}")) {
+					break;
+				}
+				
+				if(First.check("Commands", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MoreClasses", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("method")) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.add("{");
+					Util.addError(list.toString());
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				LinkedList<String> list = new LinkedList<String>();
+				list.add("{");
+				Util.addError(list.toString());
+				return;
+			}
+		}
+		
+		if(!Util.handleTerminal("{", true, false)) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(First.check("Commands", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}")) {
+					break;
+				}
+				
+				if(First.check("Commands", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MoreClasses", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("method")) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.addAll(First.Commands);
+					list.add("}");
+					Util.addError(list.toString());
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				LinkedList<String> list = new LinkedList<String>();
+				list.addAll(First.Commands);
+				list.add("}");
+				Util.addError(list.toString());
+				return;
+			}
+		}
+		
+				
 		if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) {
 			analiseCommands();
-			Util.handleTerminal("}", true, false);
+			
+			if(!Util.handleTerminal("}", true, false)) {
+				if(TokensFlow.isEmpty()) {
+					return;
+				}
+				
+				while(TokensFlow.hasNext()) {
+					if(First.check("Commands", TokensFlow.getToken()) ||
+							TokensFlow.getToken().getValue().equals("}") ||
+							First.check("MoreClasses", TokensFlow.getToken()) ||
+							TokensFlow.getToken().getValue().equals("method")) {
+						return;
+					}
+					
+					TokensFlow.next();
+				}
+				
+				if(TokensFlow.isEmpty()) {
+					return;
+				}
+			}
+
 			return;
 		} else {
-			Util.handleTerminal("}", true, false);
+			if(!Util.handleTerminal("}", true, false, new LinkedList<String>(First.Commands))) {
+				if(TokensFlow.isEmpty()) {
+					return;
+				}
+				
+				while(TokensFlow.hasNext()) {
+					if(First.check("Commands", TokensFlow.getToken())) {
+						break;
+					}
+					
+					if(TokensFlow.getToken().getValue().equals("}") ||
+							First.check("MoreClasses", TokensFlow.getToken()) ||
+							TokensFlow.getToken().getValue().equals("method")) {
+						return;
+					}
+					
+					TokensFlow.next();
+				}
+				
+				if(TokensFlow.isEmpty()) {
+					return;
+				}
+			}
+			
+			if(First.check("Commands", TokensFlow.getToken())) {
+				analiseCommands();
+				
+				if(!Util.handleTerminal("}", true, false)) {
+					if(TokensFlow.isEmpty()) {
+						return;
+					}
+					
+					while(TokensFlow.hasNext()) {
+						if(First.check("Commands", TokensFlow.getToken()) ||
+								TokensFlow.getToken().getValue().equals("}") ||
+								First.check("MoreClasses", TokensFlow.getToken()) ||
+								TokensFlow.getToken().getValue().equals("method")) {
+							return;
+						}
+						
+						TokensFlow.next();
+					}
+					
+					if(TokensFlow.isEmpty()) {
+						return;
+					}
+				}
+				
+
+				return;
+			}
+			
 			return;
 		}
 	}
@@ -327,10 +1377,93 @@ public class Analyzer {
 	//<Read Statement>   ::= 'read''(' <Reading_1> ')' ';'
 	public static void analiseReadStatement() {
 		Util.handleTerminal("read", true, false);
-		Util.handleTerminal("(", true, false);
+		
+		if(!Util.handleTerminal("(", true, false)) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(First.check("Reading1", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals(")") ||
+						TokensFlow.getToken().getValue().equals(";")) {
+					break;
+				}
+				
+				if(First.check("Commands", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MoreClasses", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("method")) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.addAll(First.Reading1);
+					Util.addError(list.toString());
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				LinkedList<String> list = new LinkedList<String>();
+				list.addAll(First.Reading1);
+				Util.addError(list.toString());
+				return;
+			}
+		}
+		
 		AnalyzerSecondary.analiseReading1();
-		Util.handleTerminal(")", true, false);
-		Util.handleTerminal(";", true, false);
+		
+		if(!Util.handleTerminal(")", true, false)) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(TokensFlow.getToken().getValue().equals(";")) {
+					break;
+				}
+				
+				if(First.check("Commands", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MoreClasses", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("method")) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.add(";");
+					Util.addError(list.toString());
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				LinkedList<String> list = new LinkedList<String>();
+				list.add(";");
+				Util.addError(list.toString());
+				return;
+			}
+		}
+		
+		if(!Util.handleTerminal(";", true, false)) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(First.check("Commands", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MoreClasses", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("method")) {
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+		}
 	}
 	
 	// <Attribution> ::= <Increment>Identifier<Array Verification><Attr> 
@@ -338,7 +1471,29 @@ public class Analyzer {
 	public static void analiseAttribution() {
 		if(TokensFlow.hasNext() && First.check("Increment", TokensFlow.getToken())) {
 			AnalyzerSecondary.analiseIncrement();
-			Util.handleTerminal("IDENTIFICADOR", false, false);
+			
+			if(!Util.handleTerminal("IDENTIFICADOR", false, false)) {
+				if(TokensFlow.isEmpty()) {
+					return;
+				}
+				
+				while(TokensFlow.hasNext()) {
+					if(First.check("Commands", TokensFlow.getToken()) ||
+							TokensFlow.getToken().getValue().equals("}") ||
+							TokensFlow.getToken().getValue().equals(";") ||
+							First.check("MoreClasses", TokensFlow.getToken()) ||
+							TokensFlow.getToken().getValue().equals("method")) {
+						return;
+					}
+					
+					TokensFlow.next();
+				}
+				
+				if(TokensFlow.isEmpty()) {
+					return;
+				}
+			}
+			
 			if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
 				AnalyzerSecondary.analiseArrayVerification();
 				if(TokensFlow.hasNext() && First.check("Attr", TokensFlow.getToken())) {
@@ -375,9 +1530,22 @@ public class Analyzer {
 				AnalyzerSecondary.analiseVerif();
 				return;
 			}
-		} 
+		} else {
+			Util.addError(First.Attribution.toString());
+
+			while(TokensFlow.hasNext()) {
+				if(First.check("Commands", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}") ||
+						TokensFlow.getToken().getValue().equals(";") ||
+						First.check("MoreClasses", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("method")) {
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+		}
 		
-		Util.addError(First.Attribution.toString());
 	}
 	
 }

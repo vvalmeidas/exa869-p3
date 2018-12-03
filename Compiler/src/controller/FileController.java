@@ -60,7 +60,11 @@ public class FileController {
 		
 	}
 	
-	
+	/**
+	 * Salva os resultados da análise sintática
+	 * @param fileName nome do arquivo
+	 * @throws IOException erro de gravação
+	 */
 	public static void saveSyntacticResults(String fileName) throws IOException {
 	    FileWriter writer = new FileWriter(TEST_PATH + "/resultado-" + fileName);
 	    

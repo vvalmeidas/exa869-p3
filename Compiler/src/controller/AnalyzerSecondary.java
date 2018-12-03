@@ -7,6 +7,13 @@ import model.Token;
 import model.TokensFlow;
 import model.Util;
 
+/**
+ * Classe que implementa os principais métodos secundários para realização da análise sintática.
+ *
+ * @author Nadine Cerqueira
+ * @author Valmir Vinicius
+ *
+ */
 public class AnalyzerSecondary {
 	
 	//<More Classes> ::= <Class Declaration><More Classes> | <>
@@ -23,28 +30,102 @@ public class AnalyzerSecondary {
 	
 	//<Class Identification> ::= Identifier <Class Heritage> '{' <Class Body> '}'
 	public static void analiseClassIdentification() {
-		Util.handleTerminal("IDENTIFICADOR", false, false);
+		if(!Util.handleTerminal("IDENTIFICADOR", false, false)) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(TokensFlow.getToken().getValue().equals("{") ||
+					TokensFlow.getToken().getValue().equals("}") ||
+					First.check("ClassHeritage", TokensFlow.getToken()) ||
+					First.check("ClassBody", TokensFlow.getToken())) {
+					break;
+				}
+				
+				if(First.check("MoreClasses", TokensFlow.getToken())) {
+					LinkedList<String> list = new LinkedList<String>(First.ClassHeritage);
+					list.add("{");
+					Util.addError(list.toString());
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				LinkedList<String> list = new LinkedList<String>(First.ClassHeritage);
+				list.add("{");
+				Util.addError(list.toString());
+				return;
+			}
+		}
 		
 
 		if(TokensFlow.hasNext() && First.check("ClassHeritage", TokensFlow.getToken())) {
 			analiseClassHeritage();
-			Util.handleTerminal("{", true, false);
-			analiseClassBody();
-			Util.handleTerminal("}", true, false);
-			return;
- 		} else {			
-			Util.handleTerminal("{", true, false);
-			analiseClassBody();
-			Util.handleTerminal("}", true, false);
+ 		} 
+		
+		if(!Util.handleTerminal("{", true, false, new LinkedList<String>(First.ClassBody))) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
 			
-			return;
+			while(TokensFlow.hasNext()) {
+				if(First.check("ClassBody", TokensFlow.getToken())) {
+					break;
+				}
+
+				if(First.check("MoreClasses", TokensFlow.getToken())) {
+					LinkedList<String> list = new LinkedList<String>(First.ClassBody);
+					list.add("}");
+					Util.addError(list.toString());
+					return;
+				}
+				
+				TokensFlow.next();
+
+			}
+			
+			if(TokensFlow.isEmpty()) {
+				LinkedList<String> list = new LinkedList<String>();
+				list.add("method");
+				list.add("}");
+				Util.addError(list.toString());
+				return;
+			}
+		}
+
+		analiseClassBody();
+
+		if(!Util.handleTerminal("}", true, false, new LinkedList<String>(First.ClassBody))) {
+			if(TokensFlow.isEmpty()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(First.check("MoreClasses", TokensFlow.getToken())) {
+					return;
+				}
+				
+				if(First.check("ClassBody", TokensFlow.getToken())) {
+					break;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			if(First.check("ClassBody", TokensFlow.getToken())) {
+				analiseClassBody();
+			}
+			
 		}
 	}
 
 	//<Class Heritage> ::= 'extends' Identifier | <>
 	public static void analiseClassHeritage() {
 		Util.handleTerminal("extends", true, false);
-		Util.handleTerminal("IDENTIFICADOR", false, false);	
+		Util.handleTerminal("IDENTIFICADOR", false, false);
 		return;
 	}
 	
@@ -77,7 +158,20 @@ public class AnalyzerSecondary {
 		
 	//<Constants> ::= Type <ConstAttribution> <More Constants> 
 	public static void analiseConstants() {
-		Util.handleTerminal(null, false, true);
+		if(!Util.handleTerminal(null, false, true)) {
+			while(TokensFlow.hasNext()) {
+				if(First.check("ClassDeclaration", TokensFlow.getToken()) ||
+						First.check("MoreConstants", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}")) {
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
+			return;
+		}
+
 		analiseConstAttribution();
 		analiseMoreConstants();
 		return;
@@ -135,25 +229,30 @@ public class AnalyzerSecondary {
 		}
 	}
 	
-	//<Variable> ::= Type <Variable2> | Identifier <Variable2>
+	
+	//<Variable> ::= Type <Variable2>
 	public static void analiseVariable() {
 		if(TokensFlow.hasNext() && Util.isType(TokensFlow.getToken())) {
 			TokensFlow.next();
 			analiseVariable2();
 			return;
-		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
-			TokensFlow.next();
-			analiseVariable2();
-			return;
-		} else if(TokensFlow.hasNext()) {
-			Util.addError(First.VariableDeclaration.toString());
+		} else {
+			Util.addError(First.Variable.toString());
+
+			while(TokensFlow.hasNext()) {
+				if(TokensFlow.getToken().getValue().equals("}")) {
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
 		}
 	}
 	
 	//<Variable2> ::= <Name> <More Variables>
 	public static void analiseVariable2() {
 		analiseName();
-		
 		if(TokensFlow.hasNext() && First.check("MoreVariables", TokensFlow.getToken())) {
 			analiseMoreVariables();
 			return;
@@ -169,13 +268,22 @@ public class AnalyzerSecondary {
 	
 	//<Name> ::= Identifier<Array Verification><More Names>
 	public static void analiseName() {
-		Util.handleTerminal("IDENTIFICADOR", false, false);
-			
+		if(!Util.handleTerminal("IDENTIFICADOR", false, false)) {
+			while(TokensFlow.hasNext()) {
+				if(First.check("MoreVariables", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MethodDeclaration", TokensFlow.getToken())) {
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+		}
+
 		if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
 			analiseArrayVerification();
 			analiseMoreNames();
 			return;
-
 		} else {
 			analiseMoreNames();
 			return;
@@ -194,6 +302,17 @@ public class AnalyzerSecondary {
 			return;
 		} else {
 			Util.addError(First.MoreNames.toString());
+			
+			while(TokensFlow.hasNext()) {
+				if(First.check("Variable", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MethodDeclaration", TokensFlow.getToken())) {
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
 		}
 	
 	}
@@ -214,7 +333,39 @@ public class AnalyzerSecondary {
 	public static void analiseParameterDeclaration2() {
 		if(TokensFlow.hasNext()) {
 			analiseType();
-			Util.handleTerminal("IDENTIFICADOR", false, false);		
+			
+			if(!Util.handleTerminal("IDENTIFICADOR", false, false)) {
+				if(TokensFlow.isEmpty()) {
+					return;
+				}
+				
+				while(TokensFlow.hasNext()) {
+					if(First.check("ArrayVerification", TokensFlow.getToken()) ||
+							First.check("MoreParameters", TokensFlow.getToken())) {
+						break;
+					}
+					
+					if(TokensFlow.getToken().getValue().equals("{") ||
+							TokensFlow.getToken().getValue().equals("class") ||
+							TokensFlow.getToken().getValue().equals("}")) {
+						LinkedList<String> list = new LinkedList<String>();
+						list.addAll(First.ArrayVerification);
+						Util.addError(list.toString());
+						return;
+					}
+					
+					TokensFlow.next();
+				}
+				
+				if(TokensFlow.isEmpty()) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.addAll(First.ArrayVerification);
+					Util.addError(list.toString());
+					return;
+				}
+				
+			}
+			
 			if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
 				analiseArrayVerification();
 				if(TokensFlow.hasNext() && First.check("MoreParameters", TokensFlow.getToken())) {
@@ -241,9 +392,6 @@ public class AnalyzerSecondary {
 		if(TokensFlow.hasNext() && Util.isType(TokensFlow.getToken())) {
 			TokensFlow.next();
 			return;
-		} else if(TokensFlow.hasNext() && TokensFlow.getToken().getTokenClass().equals("IDENTIFICADOR")) {
-			TokensFlow.next();
-			return;
 		} else {
 			Util.addError(First.Type.toString());
 		}
@@ -259,8 +407,12 @@ public class AnalyzerSecondary {
 	//<Array Verification> ::= '['<Array Index>']'<DoubleArray> | <>
 	public static void analiseArrayVerification() {
 		Util.handleTerminal("[", true, false);	
+		
 		analiseArrayIndex();
+		
 		Util.handleTerminal("]", true, false);
+		
+		
 		if(TokensFlow.hasNext() && First.check("DoubleArray", TokensFlow.getToken())) {
 			analiseDoubleArray();
 			return;
@@ -272,8 +424,11 @@ public class AnalyzerSecondary {
 	//<DoubleArray> ::= '['<Array Index>']' | <>
 	public static void analiseDoubleArray() {
 		Util.handleTerminal("[", true, false);
+		
 		analiseArrayIndex();
+		
 		Util.handleTerminal("]", true, false);
+		
 		return;
 	}
 	
@@ -313,14 +468,140 @@ public class AnalyzerSecondary {
 	//<Else Statement> ::= 'else''{'<Commands>'}' | <>
 	public static void analiseElseStatement() {
 		Util.handleTerminal("else", true, false);
-		Util.handleTerminal("{", true, false);
+		
+		if(!Util.handleTerminal("{", true, false)) {
+			if(!TokensFlow.hasNext()) {
+				return;
+			}
+			
+			while(TokensFlow.hasNext()) {
+				if(First.check("Commands", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("}")) {
+					break;
+				}
+				
+				if(TokensFlow.getToken().getValue().equals("}") ||
+						First.check("MoreClasses", TokensFlow.getToken()) ||
+						TokensFlow.getToken().getValue().equals("method")) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.addAll(First.Commands);
+					list.add("}");
+					//Util.addError(list.toString());
+					return;
+				}
+			}
+			
+			if(!TokensFlow.hasNext()) {
+				LinkedList<String> list = new LinkedList<String>();
+				list.addAll(First.Commands);
+				list.add("}");
+				//Util.addError(list.toString());
+				return;
+			}
+		}
 		
 		if(TokensFlow.hasNext() && First.check("Commands", TokensFlow.getToken())) { 
 			Analyzer.analiseCommands();
-			Util.handleTerminal("}", true, false);
+			
+			if(!Util.handleTerminal("}", true, false, new LinkedList<String>(First.Commands))) {
+				if(!TokensFlow.hasNext()) {
+					return;
+				}
+				
+				while(TokensFlow.hasNext()) {
+					if(First.check("Commands", TokensFlow.getToken()) ||
+							TokensFlow.getToken().getValue().equals("}")) {
+						break;
+					}
+					
+					if(TokensFlow.getToken().getValue().equals("}") ||
+							First.check("MoreClasses", TokensFlow.getToken()) ||
+							TokensFlow.getToken().getValue().equals("method")) {
+						LinkedList<String> list = new LinkedList<String>();
+						list.addAll(First.Commands);
+						list.add("}");
+						Util.addError(list.toString());
+						return;
+					}
+				}
+				
+				if(!TokensFlow.hasNext()) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.addAll(First.Commands);
+					list.add("}");
+					Util.addError(list.toString());
+					return;
+				}
+			}
 			return;
 		} else {
-			Util.handleTerminal("}", true, false);
+			if(!Util.handleTerminal("}", true, false, new LinkedList<String>(First.Commands))) {
+				if(!TokensFlow.hasNext()) {
+					return;
+				}
+				
+				while(TokensFlow.hasNext()) {
+					if(First.check("Commands", TokensFlow.getToken()) ||
+							TokensFlow.getToken().getValue().equals("}")) {
+						break;
+					}
+					
+					if(TokensFlow.getToken().getValue().equals("}") ||
+							First.check("MoreClasses", TokensFlow.getToken()) ||
+							TokensFlow.getToken().getValue().equals("method")) {
+						LinkedList<String> list = new LinkedList<String>();
+						list.addAll(First.Commands);
+						list.add("}");
+						Util.addError(list.toString());
+						return;
+					}
+					
+					TokensFlow.next();
+
+				}
+				
+				if(!TokensFlow.hasNext()) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.addAll(First.Commands);
+					list.add("}");
+					Util.addError(list.toString());
+					return;
+				}
+			}
+			
+			if(First.check("Commands", TokensFlow.getToken())) {
+				if(!TokensFlow.hasNext()) {
+					return;
+				}
+				
+				while(TokensFlow.hasNext()) {
+					if(First.check("Commands", TokensFlow.getToken()) ||
+							TokensFlow.getToken().getValue().equals("}")) {
+						break;
+					}
+					
+					if(TokensFlow.getToken().getValue().equals("}") ||
+							First.check("MoreClasses", TokensFlow.getToken()) ||
+							TokensFlow.getToken().getValue().equals("method")) {
+						LinkedList<String> list = new LinkedList<String>();
+						list.addAll(First.Commands);
+						list.add("}");
+						Util.addError(list.toString());
+						return;
+					}
+					
+					TokensFlow.next();
+				}
+				
+				if(!TokensFlow.hasNext()) {
+					LinkedList<String> list = new LinkedList<String>();
+					list.addAll(First.Commands);
+					list.add("}");
+					Util.addError(list.toString());
+					return;
+				}
+			}
+			
 			return;
 		}
 	}
@@ -340,12 +621,13 @@ public class AnalyzerSecondary {
 	
 	//<Increment> ::= '++' | '--'
 	public static void analiseIncrement() {
+
 		if(TokensFlow.hasNext()) {
-			if(TokensFlow.getToken().getValue() == "++" || TokensFlow.getToken().getValue() == "--") {
+			if(TokensFlow.getToken().getValue().equals("++")|| TokensFlow.getToken().getValue().equals("--")) {
 				TokensFlow.next();
 				return;
 			} else {
-				Util.addError(First.Increment.toString());
+				return;
 			}
 		}
 	}
@@ -642,7 +924,15 @@ public class AnalyzerSecondary {
 	
 	//<Reading_1> ::= Identifier<Array Verification><Attr><More Readings> 
 	public static void analiseReading1() {
-		Util.handleTerminal("IDENTFICADOR", false, false);
+		if(!Util.handleTerminal("IDENTIFICADOR", false, false)) {
+			while(TokensFlow.hasNext()) {
+				if(TokensFlow.getToken().getValue().equals(")")) {
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+		}
 			
 		if(TokensFlow.hasNext() && First.check("ArrayVerification", TokensFlow.getToken())) {
 			analiseArrayVerification();	
@@ -735,6 +1025,15 @@ public class AnalyzerSecondary {
 			
 		} else {
 			Util.addError(First.Writing1.toString());
+
+			while(TokensFlow.hasNext()) {
+				if(TokensFlow.getToken().getValue().equals(")")) {
+					return;
+				}
+				
+				TokensFlow.next();
+			}
+			
 		}
 	}
 	

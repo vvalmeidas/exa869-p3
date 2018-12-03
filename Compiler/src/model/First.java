@@ -6,7 +6,8 @@ package model;
 import java.util.LinkedList;
 
 /**
- *
+ * Implementa os conjuntos "Primeiro" no contexto do programa.
+ * 
  * @author Nadine Cerqueira
  * @author Valmir Vinicius
  *
@@ -265,7 +266,6 @@ public class First {
 	}};
 	
 	public static LinkedList<String> Variable = new LinkedList<String>() {{
-		add("IDENTIFICADOR");
 		add("int");
 		add("float");
 		add("bool");
@@ -279,7 +279,6 @@ public class First {
 	}};
 	
 	public static LinkedList<String> Type = new LinkedList<String>() {{
-		add("IDENTIFICADOR");
 		add("int");
 		add("float");
 		add("bool");
@@ -351,6 +350,41 @@ public class First {
 	public static LinkedList<String> ClassIdentification = new LinkedList<String>() {{
 		add("IDENTIFICADOR");
 	}};
+	
+	public static LinkedList<String> ClassBody  = new LinkedList<String>() {{
+		add("method");
+		add("variables");
+	}};
+	
+	public static LinkedList<String> Reading1  = new LinkedList<String>() {{
+		add("IDENTIFICADOR");
+	}};
+	
+	public static LinkedList<String> Constants  = new LinkedList<String>() {{
+		add("int");
+		add("float");
+		add("bool");
+		add("string");
+		add("void");
+	}};
+	
+	public static LinkedList<String> ClassDeclaration  = new LinkedList<String>() {{
+		add("class");
+	}};
+	
+	public static LinkedList<String> ArrayIndex  = new LinkedList<String>() {{
+		add("-");
+		add("--");
+		add("!");
+		add("(");
+		add("++");
+		add("false");
+		add("true");
+		add("IDENTIFICADOR");
+		add("NUMERO");
+	}};
+	
+	
 	
 	public static boolean check(String production, Token token) {
 		if(production == "Else") {
@@ -461,7 +495,17 @@ public class First {
 			return NormalAttribution3.contains(token.getValue()) || NormalAttribution3.contains(token.getTokenClass()); 
 		} else if(production == "Verif") {
 			return Verif.contains(token.getValue()) || Verif.contains(token.getTokenClass()); 
-		} 
+		} else if(production == "ClassBody") {
+			return ClassBody.contains(token.getValue()) || ClassBody.contains(token.getTokenClass()); 
+		} else if(production == "Reading1") {
+			return Reading1.contains(token.getValue()) || Reading1.contains(token.getTokenClass()); 
+		} else if(production == "Constants") {
+			return Constants.contains(token.getValue()) || Constants.contains(token.getTokenClass()); 
+		} else if(production == "ClassDeclaration") {
+			return ClassDeclaration.contains(token.getValue()) || ClassDeclaration.contains(token.getTokenClass()); 
+		} else if(production == "ArrayIndex") {
+			return ArrayIndex.contains(token.getValue()) || ArrayIndex.contains(token.getTokenClass()); 
+		}
 	
 		return false;
 	}
