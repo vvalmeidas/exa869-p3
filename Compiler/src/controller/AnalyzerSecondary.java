@@ -434,6 +434,8 @@ public class AnalyzerSecondary {
 	
 	//<Array Index> ::= <Add Exp>
 	public static void analiseArrayIndex() {
+		Util.arrayIndexVerifier(TokensFlow.getToken());
+		
 		analiseAddExp();
 		return;
 	}

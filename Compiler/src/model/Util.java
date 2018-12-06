@@ -22,6 +22,7 @@ public class Util {
 	 * Erros encontrados
 	 */
 	public static List<String> errors = new LinkedList<String>();
+	public static List<String> semanticErrors = new LinkedList<String>();
 	
 	/**
 	 * Verifica se token é TIPO (int, float, string, boolean ou void).
@@ -144,6 +145,19 @@ public class Util {
 		}
 		
 		return false;
+	}
+	
+	public static void arrayIndexVerifier(Token token) {
+		if(token.getTokenClass().equals("NUMERO")) {
+			if(token.getValue().contains("-")) {
+				addSemanticError("número negativo em índice de array");				
+				System.out.println("número negativo em índice de array");
+			}
+		}
+	}
+	
+	public static void addSemanticError(String erro) {
+		semanticErrors.add("Erro semântico " + erro + " na linha " + TokensFlow.getToken().getRow());
 	}
 	
 

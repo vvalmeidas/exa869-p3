@@ -1,0 +1,10 @@
+class Cliente extends Pessoa{
+    
+   method bool Saque(int conta[-2], int senha, float dinheiro){
+        if(conta == 2 && senha == 1234) then{
+            saldo = saldo + dinheiro;
+        } 
+   }
+    
+
+}

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import model.First;
+import model.Symbol;
 import model.Token;
 import model.TokensFlow;
 import model.Util;
@@ -15,8 +16,10 @@ import model.Util;
  * @author Valmir Vinicius
  *
  */
+
 public class Analyzer {
-	
+	public List<Symbol> symbolTable = new LinkedList<Symbol>();
+
 	//<Global> ::= <Constant Declaration> <Class Declaration> <More Classes>
 	public static void analiseGlobal() {
 		if(TokensFlow.hasNext() && First.check("ConstantDeclaration", TokensFlow.getToken())) {

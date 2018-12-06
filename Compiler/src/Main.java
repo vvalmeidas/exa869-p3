@@ -29,7 +29,7 @@ public class Main {
 			FileController.saveSyntacticResults(fileName);
 		}
 		
-		System.out.println("Análise Sintatica Concluida!");
+		System.out.println("Análise Sintatica Concluída!");
 		
 	}
 	

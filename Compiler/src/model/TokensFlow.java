@@ -55,6 +55,13 @@ public class TokensFlow {
 	}
 	
 	/**
+	 * Retorna o token anterior
+	 */
+	public static Token back() {
+		return tokensSet.get(index-1);
+	}
+	
+	/**
 	 * Verifica se não há mais tokens.
 	 * @return <code>true</code>, se não há mais tokens; <code>false</code>, caso contrário
 	 */
